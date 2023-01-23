@@ -1,3 +1,4 @@
+name: poecor
 services:
   api:
     image: "poecor/postdata-2-dracor-api"
