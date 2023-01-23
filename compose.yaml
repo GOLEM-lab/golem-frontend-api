@@ -1,4 +1,3 @@
-version: '2'
 services:
   api:
     image: "poecor/postdata-2-dracor-api"
