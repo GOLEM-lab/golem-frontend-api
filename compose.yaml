@@ -4,7 +4,6 @@ services:
     image: "poecor/postdata-2-dracor-api"
     build:
       context: .
-      dockerfile: devDockerfile
     ports:
       - "5000:5000"
     expose:
