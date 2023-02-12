@@ -2,7 +2,6 @@
 FROM python:3.9-slim
 
 #set the (default) environment variables
-ENV SERVICE_VERSION="0.0"
 ENV SERVICE_URL="http://localhost"
 ENV SERVICE_PORT=5000
 ENV SERVICE_DEBUG=FALSE

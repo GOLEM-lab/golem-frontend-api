@@ -6,9 +6,8 @@ from pd_corpora import PostdataCorpora
 import os
 import json
 
-# Setup using environment variables: This can be used to configure the service when running in Docker
-service_version = str(os.environ.get("SERVICE_VERSION", "0.0"))
-"""SERVICE_VERSION: Version of the service. Will be set with the env file and conform to a github release
+service_version = "0.1.0"
+"""SERVICE_VERSION: Version of the service.
 """
 
 service_url = str(os.environ.get("SERVICE_URL", "http://localhost"))
@@ -19,7 +18,7 @@ default is "localhost".
 """
 
 service_port = int(os.environ.get("SERVICE_PORT", 5000))
-"""SERVICE_PORT: Port of the running service. 
+"""SERVICE_PORT: Port of the running service.
 flask's default is 5000
 """
 
@@ -44,7 +43,7 @@ triplestore_url = os.environ.get("PD_URL", "localhost")
 """
 
 triplestore_port = int(os.environ.get("PD_PORT", 5820))
-"""PD_PORT: Port of the Triple Store. 
+"""PD_PORT: Port of the Triple Store.
 Stardog Default is 5820
 """
 
