@@ -321,18 +321,15 @@ class PostdataCorpus(Corpus):
         Returns:
             dict: Corpus metrics.
         """
-        metrics = dict()
-        # run the functions to get the data and add it to metrics
-        for funct in [
-            self.get_num_poems,
-            self.get_num_authors,
-            self.get_num_stanzas,
-            self.get_num_verses,
-            self.get_num_words,
-            self.get_num_grammatical_syllables,
-            self.get_num_metrical_syllables
-        ]:
-            metrics[funct.__name__.replace("get_num_", "")] = funct()
+        metrics = dict(
+            poems=self.get_num_poems(),
+            authors=self.get_num_authors(),
+            stanzas=self.get_num_stanzas(),
+            verses=self.get_num_verses(),
+            words=self.get_num_words(),
+            grammaticalSyllables=self.get_num_grammatical_syllables(),
+            metricalSyllables=self.get_num_metrical_syllables(),
+        )
 
         return metrics
 

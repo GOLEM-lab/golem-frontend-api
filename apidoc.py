@@ -18,8 +18,8 @@ class CorpusMetrics(Schema):
     stanzas = fields.Int()
     verses = fields.Int()
     words = fields.Int()
-    grammatical_syllables = fields.Int()
-    metrical_syllables = fields.Int()
+    grammaticalSyllables = fields.Int()
+    metricalSyllables = fields.Int()
 
 
 class CorpusMetadata(Schema):

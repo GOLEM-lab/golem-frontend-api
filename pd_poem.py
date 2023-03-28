@@ -294,8 +294,8 @@ class PostdataPoem(Poem):
             id=self.id,
             uri=self.uri,
             name=self.name,
-            source=self.get_poetry_lab_url(),
-            sourceUri="POSTDATA Poetry Lab"
+            source="POSTDATA Poetry Lab",
+            sourceUri=self.get_poetry_lab_url()
         )
 
         if include_authors:
@@ -646,7 +646,7 @@ class PostdataPoem(Poem):
 
         """
         Example:
-        
+
         {'source': {'uri': 'http://postdata.linhd.uned.es/resource/sc_carlos-mendoza_noviembre_disco2-1_1645475669320137'},
  'numOfStanzas': 4,
  'numOfLines': 14,

@@ -256,9 +256,9 @@ components:
           type: integer
         authors:
           type: integer
-        grammatical_syllables:
+        grammaticalSyllables:
           type: integer
-        metrical_syllables:
+        metricalSyllables:
           type: integer
         stanzas:
           type: integer
