@@ -493,7 +493,7 @@ class SparqlResults:
             # there is no explicit mapping, evaluate "type" of the value item
             if value_item["type"] == "uri" or value_item["type"] == "literal":
                 value = str(value_item["value"])
-            # TODO: what other types are possible?
+            # TODO: what other types are possible? typed-literal – need to evaluate "datatype" field
             else:
                 raise Exception("Mapping for value type " + value_item["type"] + " is not available.")
 
