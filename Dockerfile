@@ -12,7 +12,7 @@ ENV CONN_PROTOCOL="http"
 ENV CONN_URL="localhost"
 ENV CONN_PORT="8890"
 ENV CONN_DATABASE="GOLEM"
-ENV CONN_USER="admin"
+ENV CONN_USER="dba"
 ENV CONN_PASSWORD="admin"
 
 #create a directory for the api
@@ -32,17 +32,9 @@ CMD ls
 COPY api.py /api
 COPY static /api/static
 COPY apidoc.py /api
-COPY util.py /api
 COPY sparql.py /api
 COPY corpora.py /api
 COPY corpus.py /api
-COPY poem.py /api
-COPY author.py /api
-COPY pd_stardog_queries.py /api
-COPY pd_corpora.py /api
-COPY pd_corpus.py /api
-COPY pd_poem.py /api
-COPY pd_author.py /api
 
 # configure the container to run in an executed manner
 ENTRYPOINT [ "python", "/api/api.py" ]

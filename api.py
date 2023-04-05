@@ -46,11 +46,11 @@ triplestore_port = int(os.environ.get("CONN_PORT", 8890))
 Virtuoso Default is 8890
 """
 
-triplestore_db = os.environ.get("CONN_DATABASE", "PD_KG")
+triplestore_db = os.environ.get("CONN_DATABASE", "GOLEM")
 """CONN_DATABASE: Name of the Database in the Triple Store
 """
 
-triplestore_user = os.environ.get("PD_USER", "admin")
+triplestore_user = os.environ.get("CONN_USER", "dba")
 """CONN_USER: User name to use to connect to Triplestore
 """
 

@@ -28,5 +28,15 @@ source venv/bin/activate
 pip3 freeze > requirements.txt
 ```
 
+## Data
+Example data is in `/data`. Upload to Vituoso to named graph `https://golemlab.eu/data`. 
+SPARQL Query Interface of Virtuoso: http://localhost:8890/sparql
+
+```
+SELECT * FROM <https://golemlab.eu/data> WHERE {
+?s ?p ?o .
+}
+```
+
 ## See also
 
