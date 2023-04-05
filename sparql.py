@@ -1,51 +1,39 @@
 """Module to document and handle SPARQL Queries
 """
+from SPARQLWrapper import SPARQLWrapper, JSON
 
 
 class DB:
-    """Database (Stardog) to query against. Need to be initialized with the information needed for a connection.
+    """TripleStore to query against. Need to be initialized with the information needed for a connection.
     """
     def __init__(
             self,
             triplestore: str = "virtuoso",
             protocol: str = "http",
             url: str = "localhost",
-            port: str = "5820",
+            port: str = "8890",
             username: str = "admin",
             password: str = "admin",
-            database: str = "PD_KG"
     ):
         """Initialize the Database Connection.
 
         Args:
-            triplestore (str): Type of Triplestore. Defaults to "stardog".
+            triplestore (str): Type of Triplestore. Defaults to "virtuoso".
             protocol (str): Protocol. Should be ether "http"  or "https".
             url (str): URL of the Triple Store. Defaults to "localhost".
-            port (str): Port of the Triple Store. Defaults to stardog's default port "5820".
-            username (str): Username of the Triple Store. Defaults to stardog's default user "admin".
-            password (str): Password of the Triple Store User. Defaults to stardog's default password "admin".
-            database (str): Name of the Database. Defaults to POSTDATA's database name "PD_KG".
+            port (str): Port of the Triple Store. Defaults to stardog's default port "8890".
+            username (str): Username of the Triple Store. Defaults to "admin".
+            password (str): Password of the Triple Store User. Defaults to "admin".
 
-        Raises:
-            ConnectionError: Connection to Stardog is not possible.
         """
         self.triplestore = triplestore
 
-        # Settings for stardog
+        # Settings for virtuoso
         if self.triplestore == "virtuoso":
-
-            # Connection details
-            self.connection_details = dict(
-                endpoint=protocol + "://" + url + ":" + port,
-                username=username,
-                password=password
-            )
-
-            # set the database
-            self.database = database
-
-            # TODO: handle an exception when connection fails.
-            #self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
+            self.sparql_endpoint = protocol + "://" + url + ":" + port + "/sparql"
+            # setup the connection with sparqlwrapper package
+            self.conn = SPARQLWrapper(self.sparql_endpoint)
+            self.conn.setReturnFormat(JSON)
 
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
@@ -54,32 +42,16 @@ class DB:
         """
         Send a SPARQL Query.
         """
-        # only implemented for stardog
-        if self.triplestore == "stardog":
-            #results = self.stardog_connection.select(query)
-            #return results
-            pass
+        # only implemented for virtuoso
+        if self.triplestore == "virtuoso":
+            # use sparqlwrapper to set the query and execute it on the connection
+            self.conn.setQuery(query)
+            results = self.conn.queryAndConvert()
+            return results
 
-        # if not using stardog, we throw an exception because this is not implemented yet
+        # if not using virtuoso, we throw an exception because this is not implemented yet
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
-
-    def connect(self):
-        """Open a (new) connection to the Database."""
-        #if self.triplestore == "stardog":
-        #    self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
-        #return True
-        pass
-
-    def disconnect(self):
-        """Close the connection to the Database"""
-        #if self.triplestore == "stardog":
-        #    self.stardog_connection.__exit__()
-        #else:
-        #    raise Exception("No implementation for triple store " + self.triplestore)
-
-        #return True
-        pass
 
 
 class SparqlQuery:
