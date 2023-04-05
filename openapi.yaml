@@ -35,9 +35,9 @@ components:
     ApiInfo:
       type: object
       properties:
-        name:
-          type: string
         description:
           type: string
         version:
+          type: string
+        name:
           type: string

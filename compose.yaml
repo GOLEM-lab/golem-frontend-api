@@ -1,4 +1,4 @@
-name: poecor
+name: golem-dracor-api
 services:
   api:
     build:
@@ -9,3 +9,11 @@ services:
       - "5000"
     env_file:
         - dev.env
+  triplestore:
+    image: "openlink/virtuoso-opensource-7:latest"
+    ports:
+      - "8890:8890"
+    environment:
+      - DBA_PASSWORD=pwd123
+    expose:
+      - "8890"

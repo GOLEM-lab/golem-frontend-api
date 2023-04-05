@@ -41,9 +41,9 @@ triplestore_url = os.environ.get("CONN_URL", "localhost")
 """CONN_URL: Url of the Triple Store. Defaults to localhost, but is overwritten with the env file when using Docker.
 """
 
-triplestore_port = int(os.environ.get("CONN_PORT", 5820))
+triplestore_port = int(os.environ.get("CONN_PORT", 8890))
 """CONN_PORT: Port of the Triple Store.
-Stardog Default is 5820
+Virtuoso Default is 8890
 """
 
 triplestore_db = os.environ.get("CONN_DATABASE", "PD_KG")

@@ -6,14 +6,14 @@ ENV SERVICE_URL="http://localhost"
 ENV SERVICE_PORT=5000
 ENV SERVICE_DEBUG=FALSE
 
-#settings of the POSTDATA (PD) Triplestore connection
-ENV PD_TRIPLESTORE="stardog"
-ENV PD_PROTOCOL="http"
-ENV PD_URL="localhost"
-ENV PD_PORT="5820"
-ENV PD_DATABASE="PD_KG"
-ENV PD_USER="admin"
-ENV PD_PASSWORD="admin"
+#settings of the Triplestore connection
+ENV CONN_TRIPLESTORE="virtuoso"
+ENV CONN_PROTOCOL="http"
+ENV CONN_URL="localhost"
+ENV CONN_PORT="8890"
+ENV CONN_DATABASE="GOLEM"
+ENV CONN_USER="admin"
+ENV CONN_PASSWORD="admin"
 
 #create a directory for the api
 CMD mkdir /api
