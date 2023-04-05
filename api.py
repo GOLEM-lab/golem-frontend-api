@@ -1,6 +1,6 @@
 import flask
 from flask import jsonify, Response, send_from_directory, request
-from apidoc import spec, ApiInfo, CorpusMetadata, PoemMetadata
+from apidoc import spec, ApiInfo, CorpusMetadata
 from sparql import DB
 import os
 import json
@@ -29,33 +29,33 @@ else:
 
 # Triple Store Connection Details are retrieved from environment variables
 
-triplestore_name = str(os.environ.get("PD_TRIPLESTORE", "stardog"))
-"""PD_TRIPLESTORE: Name of the Triple Store.
-Default implementation is based on Stardog.
+triplestore_name = str(os.environ.get("CONN_TRIPLESTORE", "virtuoso"))
+"""CONN_TRIPLESTORE: Name of the Triple Store.
+Default implementation is based on Virtuoso.
 """
 
-triplestore_protocol = os.environ.get("PD_PROTOCOL", "http")
-"""PD_PROTOCOL: Postdata's current implementation uses http only."""
+triplestore_protocol = os.environ.get("CONN_PROTOCOL", "http")
+"""CONN_PROTOCOL: Postdata's current implementation uses http only."""
 
-triplestore_url = os.environ.get("PD_URL", "localhost")
-"""PD_URL: Url of the Triple Store. Defaults to localhost, but is overwritten with the env file when using Docker.
+triplestore_url = os.environ.get("CONN_URL", "localhost")
+"""CONN_URL: Url of the Triple Store. Defaults to localhost, but is overwritten with the env file when using Docker.
 """
 
-triplestore_port = int(os.environ.get("PD_PORT", 5820))
-"""PD_PORT: Port of the Triple Store.
+triplestore_port = int(os.environ.get("CONN_PORT", 5820))
+"""CONN_PORT: Port of the Triple Store.
 Stardog Default is 5820
 """
 
-triplestore_db = os.environ.get("PD_DATABASE", "PD_KG")
-"""PD_DATABASE: Name of the Database in the Triple Store
+triplestore_db = os.environ.get("CONN_DATABASE", "PD_KG")
+"""CONN_DATABASE: Name of the Database in the Triple Store
 """
 
 triplestore_user = os.environ.get("PD_USER", "admin")
-"""PD_USER: User name to use to connect to Triplestore
+"""CONN_USER: User name to use to connect to Triplestore
 """
 
-triplestore_pwd = os.environ.get("PD_PASSWORD", "admin")
-"""PD_PASSWORD: User name to use to connect to Triplestore
+triplestore_pwd = os.environ.get("CONN_PASSWORD", "admin")
+"""CONN_PASSWORD: User name to use to connect to Triplestore
 """
 
 
@@ -71,10 +71,9 @@ db = DB(
     database=triplestore_db)
 
 # Setup of the corpora
-# the demonstrator uses only one corpus with the name "postdata" because POSTDATA project has not structured their data
-# into corpora/collections but added everything to a single graph. We treat this graph as a single corpus, still
-# the setup of the API would allow for multiple corpora
-corpora = PostdataCorpora(database=db)
+# Need to instantiate the corpora here!
+# TODO: fix this!
+corpora = None
 
 # Setup of flask API
 api = flask.Flask(__name__)
@@ -160,65 +159,20 @@ def get_corpora():
 
     if param_include:
         if param_include == "metrics":
-            response_data = corpora.list_corpora(include_metrics=True)
+            #TODO: fix this here!
+            #response_data = corpora.list_corpora(include_metrics=True)
+            response_data = None
         else:
             response_data = None
             return Response(f"{str(request.args['include'])} is not a valid value of parameter 'include'.", status=400,
                             mimetype="text/plain")
     else:
-        response_data = corpora.list_corpora()
+        # TODO: fix this here
+        #response_data = corpora.list_corpora()
+        response_data = None
 
     # TODO: validate against response schema
     return jsonify(response_data)
-
-
-@api.route("/corpora/<path:corpusname>", methods=["GET"])
-def get_corpus_metadata(corpusname:str):
-    """Corpus Metadata
-
-    Args:
-        corpusname: ID/name of the corpus, e.g. "postdata".
-
-    ---
-    get:
-        summary: Corpus Metadata
-        description: Returns metadata on a corpus. Unlike the DraCor API the response does not contain information
-            on included corpus items (poems). Use the endpoint ``/corpora/{corpusname}/poems`` instead.
-        operationId: get_corpus_metadata
-        parameters:
-            -   in: path
-                name: corpusname
-                description: Name/ID of the corpus.
-                required: true
-                example: postdata
-                schema:
-                    type: string
-        responses:
-            200:
-                description: Corpus metadata.
-                content:
-                    application/json:
-                        schema: CorpusMetadata
-            404:
-                description: No such corpus. Parameter ``corpusname`` is invalid. A list of valid values can be
-                    retrieved via the ``/corpora`` endpoint.
-                content:
-                    text/plain:
-                        schema:
-                            type: string
-    """
-    if corpusname in corpora.corpora:
-        metadata = corpora.corpora[corpusname].get_metadata(include_metrics=True)
-
-        # Validate response with schema "CorpusMetadata"
-        schema = CorpusMetadata()
-        schema.load(metadata)
-
-        return jsonify(schema.dump(metadata))
-
-    else:
-        return Response(f"No such corpus: {corpusname}", status=404,
-                        mimetype="text/plain")
 
 # End of the API Endpoints
 
@@ -228,8 +182,6 @@ def get_corpus_metadata(corpusname:str):
 # because to generate the Documentation, we need the flask API to be runnable
 with api.test_request_context():
     spec.path(view=get_info)
-    spec.path(view=get_corpora)
-    spec.path(view=get_corpus_metadata)
 
 # write the OpenAPI Specification as YAML to the root folder
 with open('openapi.yaml', 'w') as f:

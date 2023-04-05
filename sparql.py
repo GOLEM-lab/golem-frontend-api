@@ -1,6 +1,5 @@
 """Module to document and handle SPARQL Queries
 """
-import stardog
 
 
 class DB:
@@ -8,7 +7,7 @@ class DB:
     """
     def __init__(
             self,
-            triplestore: str = "stardog",
+            triplestore: str = "virtuoso",
             protocol: str = "http",
             url: str = "localhost",
             port: str = "5820",
@@ -33,7 +32,7 @@ class DB:
         self.triplestore = triplestore
 
         # Settings for stardog
-        if self.triplestore == "stardog":
+        if self.triplestore == "virtuoso":
 
             # Connection details
             self.connection_details = dict(
@@ -46,7 +45,7 @@ class DB:
             self.database = database
 
             # TODO: handle an exception when connection fails.
-            self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
+            #self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
 
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
@@ -57,8 +56,9 @@ class DB:
         """
         # only implemented for stardog
         if self.triplestore == "stardog":
-            results = self.stardog_connection.select(query)
-            return results
+            #results = self.stardog_connection.select(query)
+            #return results
+            pass
 
         # if not using stardog, we throw an exception because this is not implemented yet
         else:
@@ -66,18 +66,20 @@ class DB:
 
     def connect(self):
         """Open a (new) connection to the Database."""
-        if self.triplestore == "stardog":
-            self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
-        return True
+        #if self.triplestore == "stardog":
+        #    self.stardog_connection = stardog.Connection(self.database, **self.connection_details)
+        #return True
+        pass
 
     def disconnect(self):
         """Close the connection to the Database"""
-        if self.triplestore == "stardog":
-            self.stardog_connection.__exit__()
-        else:
-            raise Exception("No implementation for triple store " + self.triplestore)
+        #if self.triplestore == "stardog":
+        #    self.stardog_connection.__exit__()
+        #else:
+        #    raise Exception("No implementation for triple store " + self.triplestore)
 
-        return True
+        #return True
+        pass
 
 
 class SparqlQuery:
