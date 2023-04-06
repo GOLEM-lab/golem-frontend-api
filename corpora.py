@@ -2,7 +2,7 @@ from corpus import Corpus
 
 
 class Corpora:
-    """Programmable Corpora of Poetry.
+    """Programmable Corpora
 
     Attributes:
         corpora (dict): Instances of class "Corpus" with "name" as keys.
@@ -29,7 +29,7 @@ class Corpora:
             self.corpora[corpus.name] = corpus
             return True
 
-    def list_corpora(self, include_metrics:bool = False) -> list:
+    def list_corpora(self, include_metrics: bool = False) -> list:
         """Get Metadata of corpora.
 
         Args:

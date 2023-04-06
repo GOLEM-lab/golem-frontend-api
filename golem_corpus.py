@@ -33,12 +33,13 @@ class GolemCorpus(Corpus):
     # Metrics of the corpus
     metrics = None
 
-    def __init__(self, database: DB = None, uri: str = None):
+    def __init__(self, database: DB = None, uri: str = None, name: str = None):
         """
 
         Args:
             database: connection to a triple store. Use instance of class DB.
             uri (str): URI of the corpus
+            name (str): Identifier (name) of the corpus
 
         """
         if database:
@@ -46,6 +47,9 @@ class GolemCorpus(Corpus):
 
         if uri:
             self.uri = uri
+
+        if name:
+            self.name = name
 
     def get_metrics(self) -> dict:
         """Assemble and return corpus metrics.
@@ -100,4 +104,3 @@ class GolemCorpus(Corpus):
             metadata["metrics"] = self.get_metrics()
 
         return metadata
-    

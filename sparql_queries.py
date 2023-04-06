@@ -51,6 +51,22 @@ class GolemQuery(SparqlQuery):
     ]
 
 
+class CorporaUris(GolemQuery):
+    """SPARQL Query: URIs of all Corpora"""
+
+    label = "URIs of Corpora"
+
+    description = """
+    Get URIs  of corpora (cls:X1_Corpus) in the Knowledge Graph.
+    """
+
+    query = """
+    SELECT ?corpus_uri WHERE {
+        ?corpus_uri a cls:X1_Corpus . 
+    }
+    """
+
+
 class CorpusMetrics(GolemQuery):
     """SPARQL Query: Metrics of a single Corpus"""
 
