@@ -493,7 +493,14 @@ class SparqlResults:
             # there is no explicit mapping, evaluate "type" of the value item
             if value_item["type"] == "uri" or value_item["type"] == "literal":
                 value = str(value_item["value"])
-            # TODO: what other types are possible? typed-literal – need to evaluate "datatype" field
+
+            # there are explicit types defined:
+            elif value_item["type"] == "typed-literal" and "datatype" in value_item:
+                if value_item["datatype"] == "http://www.w3.org/2001/XMLSchema#int":
+                    value = int(value_item["value"])
+                else:
+                    raise Exception("No automatic mapping available for typed-literal of datatype " + value_item["datatype"])
+
             else:
                 raise Exception("Mapping for value type " + value_item["type"] + " is not available.")
 
