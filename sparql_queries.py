@@ -57,7 +57,7 @@ class CorporaUris(GolemQuery):
     label = "URIs of Corpora"
 
     description = """
-    Get URIs  of corpora (cls:X1_Corpus) in the Knowledge Graph.
+    Get URIs of corpora (cls:X1_Corpus) in the Knowledge Graph.
     """
 
     query = """
@@ -83,6 +83,7 @@ class CorpusMetrics(GolemQuery):
             ?dimensionURI rdfs:label ?dimension .
         }
         """
+    # <$1> is the variable, that can be replaced with method inject(["full uri here"])
 
     variables = [
         {

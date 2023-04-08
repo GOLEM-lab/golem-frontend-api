@@ -99,3 +99,5 @@ gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Number of Words in comments on the Harry Potter corpus" ;
     crm:P90_has_value "123000"^^xsd:int ;
     crm:P91_has_unit go:unit_comment .
+
+
