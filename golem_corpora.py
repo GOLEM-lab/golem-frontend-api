@@ -1,6 +1,6 @@
 from sparql import DB
 from corpora import Corpora
-from golem_corpus import GolemCorpus
+from corpus import Corpus
 from sparql_queries import CorporaUris
 
 
