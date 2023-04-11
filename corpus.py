@@ -1,5 +1,4 @@
 from sparql import DB
-from corpus import Corpus
 from sparql_queries import CorpusMetrics
 
 
