@@ -38,7 +38,38 @@ go:unit_comment a crm:E85_Measurement_Unit ;
 gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Harry Potter Corpus" ;
     # crm:P148_has_component gd:potter_story_1 , gd:potter_story_2 ;
-    crm:P43_has_dimension <http://golemlab.eu/data/potter_corpus/measurement/number_of_documents> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_chapters> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_paragraphs> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_words-text> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_characters> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_male_characters> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_female_characters> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_nonbinary_characters> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_comments> , <http://golemlab.eu/data/potter_corpus/measurement/number_of_words-comments> .
+    crm:P43_has_dimension <http://golemlab.eu/data/potter_corpus/measurement/number_of_documents> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_chapters> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_paragraphs> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_words-text> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_characters> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_male_characters> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_female_characters> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_nonbinary_characters> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_comments> , 
+    <http://golemlab.eu/data/potter_corpus/measurement/number_of_words-comments> ;
+    crm:P1_is_identified_by <http://golemlab.eu/data/potter_corpus/corpus_name> ,
+    <http://golemlab.eu/data/potter_corpus/corpus_acronym>;
+    crm:P2_has_type <http://golemlab.eu/data/potter_corpus/corpus_description> .
+
+# Corpus name
+<http://golemlab.eu/data/potter_corpus/corpus_name> a crm:E42_Identifier ;
+    rdfs:label "Corpus name of the Harry Potter Corpus" ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ;
+    rdf:value "potter_corpus" .
+
+# Corpus acronym
+<http://golemlab.eu/data/potter_corpus/corpus_acronym> a crm:E41_Appellation ;
+    rdfs:label "Acronym of the Harry Potter Corpus" ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_acronym> ;
+    rdf:value "Potter" .
+
+# Corpus description
+<http://golemlab.eu/data/potter_corpus/corpus_description> a crm:E55_Type ;
+    rdfs:label "Description of the Harry Potter Corpus" ;
+    crm:P2_has_type <http://golemlab.eu/data/entity/type/genre> .
 
 # Measurement: Number of stories in the Harry Potter Corpus
 <http://golemlab.eu/data/potter_corpus/measurement/number_of_documents> a crm:E54_Dimension ;
@@ -99,5 +130,3 @@ gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Number of Words in comments on the Harry Potter corpus" ;
     crm:P90_has_value "123000"^^xsd:int ;
     crm:P91_has_unit go:unit_comment .
-
-
