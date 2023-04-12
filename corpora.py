@@ -1,6 +1,6 @@
 from corpus import Corpus
 from sparql import DB
-from sparql_queries import CorporaUris
+from sparql_queries import CorporaUris, CorporaUrisNames
 
 
 class Corpora:
@@ -73,6 +73,33 @@ class Corpora:
 
             else:
                 raise Exception("Can not retrieve uris without database connection.")
+
+    def load(self) -> bool:
+        """Load corpora from Knowledge Graph
+
+        Uses a SPARQL Query of class "CorporaUrisNames" of the module "sparql_queries" for fetch the available data
+        from the Knowledge Graph.
+
+        Returns:
+            bool: True if successful.
+        """
+        # need to do a type conversion, otherwise trying to append to None type
+        if not self.corpora:
+            self.corpora = dict()
+
+        if self.database:
+            query = CorporaUrisNames()
+            query.prepare()
+            query.execute(self.database)
+            results = query.results.simplify()
+
+            for item in results:
+                name = item["corpus_name"]
+                uri = item["corpus_uri"]
+                corpus = Corpus(database=self.database, uri=uri, name=name)
+                self.add_corpus(corpus)
+        else:
+            raise Exception("Can not load corpora without database")
 
     def add_corpus(self, corpus: Corpus) -> bool:
         """Add a corpus instance.

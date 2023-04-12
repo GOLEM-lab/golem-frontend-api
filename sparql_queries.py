@@ -67,6 +67,26 @@ class CorporaUris(GolemQuery):
     """
 
 
+class CorporaUrisNames(GolemQuery):
+    """SPARQL Query: URIs and Corpus Names of all Corpora"""
+
+    label = "URIs and Names of Corpora"
+
+    description = """
+    Get URIs and Names of corpora (cls:X1_Corpus) in the Knowledge Graph.
+    """
+
+    query = """
+    SELECT ?corpus_uri, ?corpus_name WHERE {
+        ?corpus_uri a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?nameID .
+        
+        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+            rdf:value ?corpus_name .
+    }
+    """
+
+
 class CorpusName(GolemQuery):
     """SPARQL Query: Name by CorpusURI"""
 
