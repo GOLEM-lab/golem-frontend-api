@@ -1,10 +1,24 @@
 """Module to document and handle SPARQL Queries
 """
 from SPARQLWrapper import SPARQLWrapper, JSON
+from rdflib import Graph
+import requests
+from requests.auth import HTTPDigestAuth
 
 
 class DB:
     """TripleStore to query against. Need to be initialized with the information needed for a connection.
+
+    Attributes:
+        triplestore (str): Type of triplestore. Defaults to "virtuoso".
+        protocol (str): Protocol. Defaults to "http".
+        url (str): URL of the Triple Store. Defaults to "localhost".
+        port (str): Port of the Triple Store. Defaults to stardog's default port "8890".
+        username (str): Username of the Triple Store. Defaults to None.
+        password (str): Password of the Triple Store User. Defaults to None.
+        sparql_query_endpoint (str): URL of the SPARQL endpoint.
+        sparql_auth_endpoint (str): URL of the endpoint that is used for authorized queries, e.g. SPARQL UPDATE.
+        crud_endpoint (str): URL of the endpoint that allows for uploading.
     """
     def __init__(
             self,
@@ -12,8 +26,8 @@ class DB:
             protocol: str = "http",
             url: str = "localhost",
             port: str = "8890",
-            username: str = "admin",
-            password: str = "admin",
+            username: str = None,
+            password: str = None,
     ):
         """Initialize the Database Connection.
 
@@ -22,18 +36,37 @@ class DB:
             protocol (str): Protocol. Should be ether "http"  or "https".
             url (str): URL of the Triple Store. Defaults to "localhost".
             port (str): Port of the Triple Store. Defaults to stardog's default port "8890".
-            username (str): Username of the Triple Store. Defaults to "admin".
-            password (str): Password of the Triple Store User. Defaults to "admin".
-
+            username (str): Username of the Triple Store. Defaults to None.
+            password (str): Password of the Triple Store User. Defaults to None.
         """
         self.triplestore = triplestore
+        self.protocol = protocol
+        self.url = url
+        self.port = port
+        self.username = username
+        self.password = password
 
         # Settings for virtuoso
         if self.triplestore == "virtuoso":
-            self.sparql_endpoint = protocol + "://" + url + ":" + port + "/sparql"
-            # setup the connection with sparqlwrapper package
-            self.conn = SPARQLWrapper(self.sparql_endpoint)
+
+            # set the url of the SPARQL endpoint
+            self.sparql_query_endpoint = protocol + "://" + url + ":" + port + "/sparql"
+
+            # set the connection with sparqlwrapper package
+            self.conn = SPARQLWrapper(self.sparql_query_endpoint)
             self.conn.setReturnFormat(JSON)
+
+            # if username and password are provided, set the endpoints for uploading and SPARQL UPDATE
+            if self.username and self.password:
+                # set the url of the sparql-auth endpoint
+                self.sparql_auth_endpoint = protocol + "://" + url + ":" + port + "/sparql-auth"
+
+                # set the url of the sparql-graph-crud-auth endpoint
+                self.crud_endpoint = protocol + "://" + url + ":" + port + "/sparql-graph-crud-auth"
+
+            else:
+                self.sparql_auth_endpoint = None
+                self.crud_endpoint = None
 
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
@@ -50,6 +83,53 @@ class DB:
             return results
 
         # if not using virtuoso, we throw an exception because this is not implemented yet
+        else:
+            raise Exception("No implementation for triple store " + self.triplestore)
+
+    def upload(self, content: str, graph: str = None, format: str = "ttl"):
+        """Upload RDF data into triple store.
+
+        Args:
+            content (str): Triples to upload.
+            graph (str): Name of the named graph. Defaults to "None".
+            format (str): Format of the content provided. Defaults to "ttl".
+        """
+
+        if self.triplestore == "virtuoso":
+            # check the data by parsing it with rdflib. Should be valid RDF at least.
+            try:
+                g = Graph()
+                g.parse(data=content, format=format)
+            except:
+                raise Exception("Could not parse provided data.")
+
+            # serialize for uploading and encode UTF8
+            ttl_content = g.serialize(format="ttl")
+            data = ttl_content.encode(encoding='utf-8')
+
+            if self.crud_endpoint:
+                if graph:
+                    request_url = self.crud_endpoint + "?graph=" + graph
+                else:
+                    request_url = self.crud_endpoint
+            else:
+                raise Exception("Upload URL is not set.")
+
+            # send the request
+            if self.username and self.password:
+                response = requests.post(url=request_url, data=data, auth=HTTPDigestAuth(self.username, self.password),
+                                         headers={'Content-Type': 'application/x-turtle'})
+            else:
+                # this will probably never work, but maybe the Triple Store is set that it accepts anonymous uploads
+                response = requests.post(url=request_url, data=data, headers={'Content-Type': 'application/x-turtle'})
+
+            if response.status_code == 201 or response.status_code == 201:
+                return True
+            elif response.status_code == 401:
+                raise Exception("Server declined upload due to missing/wrong credentials.")
+            else:
+                raise Exception("Server returned status code: " + str(response.status_code))
+
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
 
