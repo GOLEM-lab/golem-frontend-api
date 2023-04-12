@@ -89,6 +89,8 @@ class DB:
     def upload(self, content: str, graph: str = None, format: str = "ttl"):
         """Upload RDF data into triple store.
 
+        see also https://www.w3.org/TR/sparql11-http-rdf-update/
+
         Args:
             content (str): Triples to upload.
             graph (str): Name of the named graph. Defaults to "None".
@@ -130,6 +132,30 @@ class DB:
             else:
                 raise Exception("Server returned status code: " + str(response.status_code))
 
+        else:
+            raise Exception("No implementation for triple store " + self.triplestore)
+
+    def delete_graph(self, graph: str):
+        """Delete a named graph
+
+        Args:
+            graph (str): Name of a named graph.
+        """
+
+        if self.triplestore == "virtuoso":
+
+            request_url = self.crud_endpoint + "?graph=" + graph
+
+            if self.username and self.password:
+                response = requests.delete(url=request_url, auth=HTTPDigestAuth(self.username, self.password))
+            else:
+                # this will probably never work, but maybe the Triple Store is set that it accepts anonymous delete
+                response = requests.delete(url=request_url)
+
+            if response.status_code == 200:
+                return True
+            else:
+                raise Exception("Server returned status code: " + str(response.status_code))
         else:
             raise Exception("No implementation for triple store " + self.triplestore)
 
