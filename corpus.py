@@ -1,5 +1,5 @@
 from sparql import DB
-from sparql_queries import CorpusMetrics
+from sparql_queries import CorpusMetrics, CorpusName
 
 
 class Corpus:
@@ -32,7 +32,7 @@ class Corpus:
     # Metrics of the corpus
     metrics = None
 
-    def __init__(self, database: DB = None, uri: str = None, name: str = None):
+    def __init__(self, database: DB = None, uri: str = None, name: str = None, acronym: str = None):
         """
 
         Args:
@@ -49,6 +49,15 @@ class Corpus:
 
         if name:
             self.name = name
+        else:
+            # try to sparql the name from the knowledge graph
+            try:
+                self = self.get_name()
+            except:
+                pass
+
+        if acronym:
+            self.acronym = acronym
 
     def get_metrics(self) -> dict:
         """Assemble and return corpus metrics.
@@ -82,6 +91,33 @@ class Corpus:
             else:
                 raise Exception("Can not retrieve metrics without database connection.")
 
+    def get_name(self) -> str:
+        """Get name of a corpus.
+
+        Uses SPARQL query "CorpusName" of the module "sparql_queries".
+        """
+        if self.name:
+            return self.name
+        else:
+            if self.database:
+                if self.uri:
+                    query = CorpusName()
+                    query.prepare()
+                    query.inject([self.uri])
+                    query.execute(self.database)
+                    results = query.results.simplify()
+
+                    if len(results) > 0:
+                        self.name = results[0]
+                        return self.name
+                    else:
+                        raise Exception("No name in the knowledge graph.")
+
+                else:
+                    raise Exception("URI of corpus is not set.")
+            else:
+                raise Exception("Can't retrieve name without database connection.")
+
     def get_metadata(self, include_metrics: bool = False) -> dict:
         """Serialize Corpus Metadata.
 
@@ -91,6 +127,7 @@ class Corpus:
         Returns:
             dict: Serialization of the corpus metadata.
         """
+
         metadata = dict(
             uri=self.uri,
             name=self.name,

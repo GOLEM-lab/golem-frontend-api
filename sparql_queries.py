@@ -67,6 +67,64 @@ class CorporaUris(GolemQuery):
     """
 
 
+class CorpusName(GolemQuery):
+    """SPARQL Query: Name by CorpusURI"""
+
+    label = "Name of Corpus"
+
+    description = """
+    Get name of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?name WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?nameID .
+
+        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+            rdf:value ?name .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+class CorpusNameAcronym(GolemQuery):
+    """SPARQL Query: Name and Acronym by CorpusURI"""
+
+    label = "Name and Acronym of Corpus"
+
+    description = """
+    Get name and acronym of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?name ?acronym WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?nameID, ?acronymID .
+
+        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+            rdf:value ?name .
+            
+        ?acronymID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_acronym> ;
+            rdf:value ?acronym .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+
 class CorpusMetrics(GolemQuery):
     """SPARQL Query: Metrics of a single Corpus"""
 
