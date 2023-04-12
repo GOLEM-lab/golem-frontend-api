@@ -1,8 +1,11 @@
 ApiDoc==1.4.0
 apispec==6.0.2
 apispec-webframeworks==0.5.2
+certifi==2022.12.7
+charset-normalizer==3.1.0
 click==8.1.3
 Flask==2.2.2
+idna==3.4
 isodate==0.6.1
 itsdangerous==2.1.2
 Jinja2==3.1.2
@@ -13,6 +16,8 @@ packaging==22.0
 pyparsing==3.0.9
 PyYAML==6.0
 rdflib==6.3.2
+requests==2.28.2
 six==1.16.0
 SPARQLWrapper==2.0.0
+urllib3==1.26.15
 Werkzeug==2.2.2
