@@ -1,5 +1,5 @@
 from sparql import DB
-from sparql_queries import CorpusMetrics, CorpusName
+from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym
 
 
 class Corpus:
@@ -118,6 +118,35 @@ class Corpus:
             else:
                 raise Exception("Can't retrieve name without database connection.")
 
+    def get_acronym(self) -> str:
+        """Get corpus acronym
+
+        Uses SPARQL query "CorpusAcronym" of the module "sparql_queries".
+
+        """
+        if self.acronym:
+            return self.acronym
+        else:
+            if self.database:
+                if self.uri:
+                    query = CorpusAcronym()
+                    query.prepare()
+                    query.inject([self.uri])
+                    query.execute(self.database)
+                    results = query.results.simplify()
+
+                    if len(results) > 0:
+                        self.acronym = results[0]
+                        return self.acronym
+                    else:
+                        raise Exception("No acronym in the knowledge graph.")
+
+                else:
+                    raise Exception("URI of corpus is not set.")
+
+            else:
+                raise Exception("Can't retrieve acronym without database connection.")
+
     def get_metadata(self, include_metrics: bool = False) -> dict:
         """Serialize Corpus Metadata.
 
@@ -133,7 +162,7 @@ class Corpus:
             name=self.name,
             title=self.title,
             description=self.description,
-            acronym=self.acronym
+            acronym=self.get_acronym()
         )
 
         if include_metrics is True:

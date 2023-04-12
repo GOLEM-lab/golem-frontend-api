@@ -94,6 +94,35 @@ class CorpusName(GolemQuery):
         }
     ]
 
+
+class CorpusAcronym(GolemQuery):
+    """SPARQL Query: Acronym by CorpusURI"""
+
+    label = "Acronym of Corpus"
+
+    description = """
+    Get acronym of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?acronym WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?acronymID .
+
+        ?acronymID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_acronym> ;
+            rdf:value ?acronym .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+
 class CorpusNameAcronym(GolemQuery):
     """SPARQL Query: Name and Acronym by CorpusURI"""
 
