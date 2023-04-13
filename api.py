@@ -3,6 +3,7 @@ from flask import jsonify, Response, send_from_directory, request
 from apidoc import spec
 from schemas import ApiInfo, CorpusMetadata
 from sparql import DB
+from corpora import Corpora
 import os
 import json
 
@@ -72,8 +73,9 @@ db = DB(
 
 # Setup of the corpora
 # Need to instantiate the corpora here!
-# TODO: fix this!
-corpora = None
+corpora = Corpora(database=db)
+# load the corpora
+corpora.load()
 
 # Setup of flask API
 api = flask.Flask(__name__)
@@ -159,19 +161,16 @@ def get_corpora():
 
     if param_include:
         if param_include == "metrics":
-            #TODO: fix this here!
-            #response_data = corpora.list_corpora(include_metrics=True)
-            response_data = None
+            response_data = corpora.list_corpora(include_metrics=True)
         else:
             response_data = None
             return Response(f"{str(request.args['include'])} is not a valid value of parameter 'include'.", status=400,
                             mimetype="text/plain")
     else:
-        # TODO: fix this here
-        #response_data = corpora.list_corpora()
-        response_data = None
+        response_data = corpora.list_corpora()
 
     # TODO: validate against response schema
+
     return jsonify(response_data)
 
 # End of the API Endpoints
@@ -182,6 +181,7 @@ def get_corpora():
 # because to generate the Documentation, we need the flask API to be runnable
 with api.test_request_context():
     spec.path(view=get_info)
+    spec.path(view=get_corpora)
 
 # write the OpenAPI Specification as YAML to the root folder
 with open('openapi.yaml', 'w') as f:

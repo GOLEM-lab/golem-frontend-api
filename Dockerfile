@@ -31,7 +31,9 @@ CMD ls
 COPY api.py /api
 COPY static /api/static
 COPY apidoc.py /api
+COPY schemas.py /api
 COPY sparql.py /api
+COPY sparql_queries.py /api
 COPY corpora.py /api
 COPY corpus.py /api
 

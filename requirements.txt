@@ -1,4 +1,3 @@
-ApiDoc==1.4.0
 apispec==6.0.2
 apispec-webframeworks==0.5.2
 certifi==2022.12.7
