@@ -56,20 +56,22 @@ triplestore_pwd = os.environ.get("CONN_PASSWORD", "admin")
 """CONN_PASSWORD: User name to use to connect to Triplestore
 """
 
-triplestore_graph = os.environ.get("CONN_GRAPH", "https://golemlab.eu/data")
+# this is probably not in use
+# triplestore_graph = os.environ.get("CONN_GRAPH", "https://golemlab.eu/data")
 """CONN_GRAPH: Default named graph where data is stored
 """
 
 # Establish a connection to the Triple Store with the designated class "DB"
 # TODO: test, if the connection was successfully established. Although, the __init__ will raise an error
+# removed graph=triplestore_graph
 db = DB(
     triplestore=triplestore_name,
     protocol=triplestore_protocol,
     url=triplestore_url,
     port=str(triplestore_port),
     username=triplestore_user,
-    password=triplestore_pwd,
-    graph=triplestore_graph)
+    password=triplestore_pwd)
+
 
 # Setup of the corpora
 # Need to instantiate the corpora here!
