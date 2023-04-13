@@ -3,6 +3,8 @@ services:
   api:
     build:
       context: .
+    depends_on:
+      - triplestore
     ports:
       - "5000:5000"
     expose:
