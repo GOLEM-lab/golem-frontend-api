@@ -181,6 +181,38 @@ def get_corpora():
 
     return jsonify(response_data)
 
+
+@api.route("/db", methods=["POST"])
+def ingest_data():
+    """Load data into the triple store
+        ---
+        post:
+            summary: Load data
+            description: Load data into the triple store
+            operationId: ingest_data
+            requestBody:
+                description: Data to load.
+                required: true
+                content:
+                    application/x-turtle:
+                        schema:
+                            type: string
+            responses:
+                201:
+                    description: Successfully ingested data.
+                400:
+                    description: No data included in the request body. Can not load data.
+                500:
+                    description: Something went wrong. Could not load data.
+        """
+    data = request.data
+    if not data:
+        return Response("No data to load.", status=400, mimetype="text/plain")
+    try:
+        db.upload(data, graph="https://golemlab.eu/data", format="ttl")
+        return Response("Successfully ingested data", status=201, mimetype="text/plain")
+    except:
+        return Response("Something went wrong.", status=500, mimetype="text/plain")
 # End of the API Endpoints
 
 
@@ -190,6 +222,7 @@ def get_corpora():
 with api.test_request_context():
     spec.path(view=get_info)
     spec.path(view=get_corpora)
+    spec.path(view=ingest_data)
 
 # write the OpenAPI Specification as YAML to the root folder
 with open('openapi.yaml', 'w') as f:
