@@ -190,6 +190,14 @@ def ingest_data():
             summary: Load data
             description: Load data into the triple store
             operationId: ingest_data
+            parameters:
+            -   in: query
+                name: graph
+                description: Name of the target graph. Default graph is "https://golemlab.eu/data".
+                required: false
+                default: https://golemlab.eu/data
+                schema:
+                    type: string
             requestBody:
                 description: Data to load.
                 required: true
@@ -205,14 +213,56 @@ def ingest_data():
                 500:
                     description: Something went wrong. Could not load data.
         """
+    if "graph" in request.args:
+        graph = str(request.args["graph"])
+    else:
+        graph = "https://golemlab.eu/data"
+
     data = request.data
     if not data:
         return Response("No data to load.", status=400, mimetype="text/plain")
     try:
-        db.upload(data, graph="https://golemlab.eu/data", format="ttl")
+        db.upload(data, graph=graph, format="ttl")
         return Response("Successfully ingested data", status=201, mimetype="text/plain")
     except:
         return Response("Something went wrong.", status=500, mimetype="text/plain")
+
+
+@api.route("/db", methods=["DELETE"])
+def delete_graph():
+    """Delete a Named Graph
+        ---
+        delete:
+            summary: Delete Named Graph
+            description: Delete a named graph from the triple store
+            operationId: delete_graph
+            parameters:
+            -   in: query
+                name: graph
+                description: Name of the graph to delete. Default graph is "https://golemlab.eu/data".
+                required: true
+                default: https://golemlab.eu/data
+                schema:
+                    type: string
+            responses:
+                200:
+                    description: Successfully deleted graph.
+                400:
+                    description: Graph to delete is not specified.
+                500:
+                    description: Something went wrong. Could not delete the graph.
+        """
+    if "graph" in request.args:
+        graph = str(request.args["graph"])
+    else:
+        return Response("Graph to delete is not specified.", status=400, mimetype="text/plain")
+
+    try:
+        db.delete_graph(graph)
+        return Response("Successfully deleted graph", status=200, mimetype="text/plain")
+    except:
+        return Response("Something went wrong.", status=500, mimetype="text/plain")
+
 # End of the API Endpoints
 
 
@@ -223,6 +273,8 @@ with api.test_request_context():
     spec.path(view=get_info)
     spec.path(view=get_corpora)
     spec.path(view=ingest_data)
+    spec.path(view=delete_graph)
+
 
 # write the OpenAPI Specification as YAML to the root folder
 with open('openapi.yaml', 'w') as f:
