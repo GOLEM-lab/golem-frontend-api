@@ -5,6 +5,8 @@ services:
       context: .
     depends_on:
       - triplestore
+    links:
+      - triplestore
     ports:
       - "5000:5000"
     expose:

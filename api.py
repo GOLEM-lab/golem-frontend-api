@@ -70,14 +70,20 @@ db = DB(
     url=triplestore_url,
     port=str(triplestore_port),
     username=triplestore_user,
-    password=triplestore_pwd)
+    password=triplestore_pwd
+)
 
 
 # Setup of the corpora
 # Need to instantiate the corpora here!
+# TODO fix this
 corpora = Corpora(database=db)
 # load the corpora
-corpora.load()
+try:
+    corpora.load()
+except:
+    # raise Exception("Can not load corpora. SPARQL endpoint is " + db.sparql_query_endpoint)
+    pass
 
 # Setup of flask API
 api = flask.Flask(__name__)
