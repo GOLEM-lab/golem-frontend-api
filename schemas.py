@@ -73,6 +73,7 @@ class Character(Schema):
     networkdataCsvUrl = fields.Str()
     authors = fields.Nested(Author)
 
+
 class Corpus(Schema):
     """Schema of the corpus.
 
