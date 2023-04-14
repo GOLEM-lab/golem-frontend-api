@@ -182,6 +182,58 @@ def get_corpora():
     return jsonify(response_data)
 
 
+@api.route("/corpora/<path:corpusname>", methods=["GET"])
+def get_corpus_metadata(corpusname: str):
+    """Get Metadata on a single corpus
+
+    Args:
+        corpusname: ID/name of the corpus.
+
+    ---
+    get:
+        summary: Corpus Metadata
+        description: Returns metadata on a corpus. Unlike the DraCor API the response does not contain information
+            on included items (works, characters). Use the endpoint ``/corpora/{corpusname}/characters`` instead.
+        operationId: get_corpus_metadata
+        summary: Corpus Metadata
+        parameters:
+            -   in: path
+                name: corpusname
+                description: Name/ID of the corpus.
+                required: true
+                example: potter_corpus
+                schema:
+                    type: string
+        responses:
+            200:
+                description: Corpus metadata.
+                content:
+                    application/json:
+                        schema: CorpusMetadata
+            404:
+                description: No such corpus. Parameter ``corpusname`` is invalid. A list of valid values can be
+                    retrieved via the ``/corpora`` endpoint.
+                content:
+                    text/plain:
+                        schema:
+                            type: string
+    """
+    if corpusname in corpora.corpora:
+        metadata = corpora.corpora[corpusname].get_metadata(include_metrics=True)
+
+        # TODO: Validate response before returning
+        # Validate response with schema "CorpusMetadata"
+        # schema = CorpusMetadata()
+        # schema.load(metadata)
+
+        # return jsonify(schema.dump(metadata))
+        return jsonify(metadata)
+
+    else:
+        return Response(f"No such corpus: {corpusname}", status=404,
+                        mimetype="text/plain")
+
+
 @api.route("/corpora", methods=["PUT"])
 def trigger_loading_corpora():
     """Trigger Loading of Corpora
@@ -201,7 +253,6 @@ def trigger_loading_corpora():
         return Response("Successfully loaded corpora.", status=200, mimetype="text/plain")
     except:
         return Response("Something went wrong.", status=500, mimetype="text/plain")
-
 
 
 @api.route("/db", methods=["POST"])
@@ -294,6 +345,7 @@ def delete_graph():
 with api.test_request_context():
     spec.path(view=get_info)
     spec.path(view=get_corpora)
+    spec.path(view=get_corpus_metadata)
     spec.path(view=trigger_loading_corpora)
     spec.path(view=ingest_data)
     spec.path(view=delete_graph)

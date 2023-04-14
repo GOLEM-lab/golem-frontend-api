@@ -51,7 +51,7 @@ class ExternalReference(Schema):
 class Author(Schema):
     """Metadata on a single author"""
     id = fields.Str()
-    uri = field.Str() # maybe should add that
+    uri = fields.Str() # maybe should add that
     authorName = fields.Str()
     authorFullname = fields.Str()
     authorShortname = fields.Str()

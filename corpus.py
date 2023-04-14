@@ -69,7 +69,7 @@ class Corpus:
         """
 
         if self.metrics:
-            return metrics
+            return self.metrics
 
         else:
             if self.database:
