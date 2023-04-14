@@ -86,3 +86,4 @@ class Corpus(Schema):
     licenceUrl = fields.Str()
     repository = fields.Str()
     characters = fields.Nested(Character)
+
