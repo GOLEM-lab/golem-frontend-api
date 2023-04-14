@@ -49,7 +49,3 @@ Access Fellowship programme. CLS INFRA has received funding from the
 European Union’s Horizon 2020 research and innovation programme under
 grant agreement №101004984.
 
-<img src="man/figures/CLS.png" align="left" width="360" />
-
-<img src="man/figures/Flag_of_Europe.png" align="left" width="360" />
-
