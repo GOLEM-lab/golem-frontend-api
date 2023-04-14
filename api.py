@@ -182,6 +182,28 @@ def get_corpora():
     return jsonify(response_data)
 
 
+@api.route("/corpora", methods=["PUT"])
+def trigger_loading_corpora():
+    """Trigger Loading of Corpora
+    ---
+    put:
+            summary: Load Corpora
+            description: Trigger Loading of Corpora
+            operationId: trigger_loading_corpora
+            responses:
+                200:
+                    description: Successfully loaded corpora.
+                500:
+                    description: Something went wrong. Could not load data.
+    """
+    try:
+        corpora.load()
+        return Response("Successfully loaded corpora.", status=200, mimetype="text/plain")
+    except:
+        return Response("Something went wrong.", status=500, mimetype="text/plain")
+
+
+
 @api.route("/db", methods=["POST"])
 def ingest_data():
     """Load data into the triple store
@@ -272,6 +294,7 @@ def delete_graph():
 with api.test_request_context():
     spec.path(view=get_info)
     spec.path(view=get_corpora)
+    spec.path(view=trigger_loading_corpora)
     spec.path(view=ingest_data)
     spec.path(view=delete_graph)
 
