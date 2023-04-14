@@ -29,15 +29,176 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiInfo'
+  /corpora:
+    get:
+      summary: List available corpora
+      description: Returns a list of available corpora
+      operationId: get_corpora
+      parameters:
+      - in: query
+        name: include
+        description: Include additional information, e.g. corpus metrics.
+        required: false
+        example: metrics
+        schema:
+          type: string
+          enum:
+          - metrics
+      responses:
+        '200':
+          description: Available corpora.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorpusMetadata'
+        '400':
+          description: Invalid value of parameter "include".
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      summary: Load Corpora
+      description: Trigger Loading of Corpora
+      operationId: trigger_loading_corpora
+      responses:
+        '200':
+          description: Successfully loaded corpora.
+        '500':
+          description: Something went wrong. Could not load data.
+  /corpora/{corpusname}:
+    get:
+      summary: Corpus Metadata
+      description: Returns metadata on a corpus. Unlike the DraCor API the response
+        does not contain information on included items (works, characters). Use the
+        endpoint ``/corpora/{corpusname}/characters`` instead.
+      operationId: get_corpus_metadata
+      parameters:
+      - in: path
+        name: corpusname
+        description: Name/ID of the corpus.
+        required: true
+        example: potter_corpus
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Corpus metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorpusMetadata'
+        '404':
+          description: No such corpus. Parameter ``corpusname`` is invalid. A list
+            of valid values can be retrieved via the ``/corpora`` endpoint.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /db:
+    post:
+      summary: Load data
+      description: Load data into the triple store
+      operationId: ingest_data
+      parameters:
+      - in: query
+        name: graph
+        description: Name of the target graph. Default graph is "https://golemlab.eu/data".
+        required: false
+        default: https://golemlab.eu/data
+        schema:
+          type: string
+      requestBody:
+        description: Data to load.
+        required: true
+        content:
+          application/x-turtle:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: Successfully ingested data.
+        '400':
+          description: No data included in the request body. Can not load data.
+        '500':
+          description: Something went wrong. Could not load data.
+    delete:
+      summary: Delete Named Graph
+      description: Delete a named graph from the triple store
+      operationId: delete_graph
+      parameters:
+      - in: query
+        name: graph
+        description: Name of the graph to delete. Default graph is "https://golemlab.eu/data".
+        required: true
+        default: https://golemlab.eu/data
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted graph.
+        '400':
+          description: Graph to delete is not specified.
+        '500':
+          description: Something went wrong. Could not delete the graph.
 openapi: 3.0.3
 components:
   schemas:
     ApiInfo:
       type: object
       properties:
+        name:
+          type: string
         description:
           type: string
         version:
           type: string
+    WordCount:
+      type: object
+      properties:
+        words_in_documents:
+          type: integer
+        words_in_comments:
+          type: integer
+    CorpusMetrics:
+      type: object
+      properties:
+        paragraphs:
+          type: integer
+        female:
+          type: integer
+        characters:
+          type: integer
+        nonbinary:
+          type: integer
+        comments:
+          type: integer
+        male:
+          type: integer
+        chapters:
+          type: integer
+        wordcount:
+          $ref: '#/components/schemas/WordCount'
+        documents:
+          type: integer
+      required:
+      - wordcount
+    CorpusMetadata:
+      type: object
+      properties:
+        repository:
+          type: string
         name:
+          type: string
+        uri:
+          type: string
+        description:
+          type: string
+        metrics:
+          $ref: '#/components/schemas/CorpusMetrics'
+        acronym:
+          type: string
+        title:
           type: string
