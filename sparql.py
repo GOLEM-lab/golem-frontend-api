@@ -325,6 +325,17 @@ class SparqlQuery:
             if self.state == "prepared" and self.query_includes_variables is False and database is not None:
                 self.execute(database)
 
+    def get_prefix_uri(self, prefix: str) -> str:
+        """Get the uri for a prefix form self.prefixes"""
+        if self.prefixes:
+            try:
+                uri = list(filter(lambda item: prefix in item["prefix"], self.prefixes))[0]["uri"]
+                return uri
+            except:
+                raise Exception("Prefix " + prefix + " is not defined.")
+        else:
+            raise Exception("No prefixes defined.")
+
     def check_for_variables(self, check: str = "query") -> bool:
         """Check if query or template contain variables.
 

@@ -1,6 +1,8 @@
 from sparql import DB
 from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId
 from schemas import CorpusSchema
+from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal
+from sparql_queries import GolemQuery
 
 
 class Corpus:
@@ -309,3 +311,26 @@ class Corpus:
                 raise Exception("Could not validate metadata!")
 
         return metadata
+
+    def generate_graph(self) -> Graph:
+        """Generate graph data of corpus.
+
+        We use that for creating test data.
+        """
+
+        # needed for the prefixes
+        golem_query = GolemQuery()
+        GD = Namespace(golem_query.get_prefix_uri("gd"))
+        CRM = Namespace(golem_query.get_prefix_uri("crm"))
+        CLS = Namespace(golem_query.get_prefix_uri("cls"))
+
+        g = Graph()
+        # add the prefixes
+        for item in golem_query.prefixes:
+            g.namespace_manager.bind(item["prefix"], URIRef(item["uri"]))
+
+        g.add((GD[self.id], RDF.type, CLS.X1_Corpus))
+        g.add((GD[self.id], RDFS.label, Literal(self.name)))
+
+        return g
+
