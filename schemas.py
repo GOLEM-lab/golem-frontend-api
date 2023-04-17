@@ -8,23 +8,18 @@ class ApiInfoSchema(Schema):
     description = fields.Str()
 
 
-class WordCountSchema(Schema):
-    """Schema of the wordcount included in CorpusMetrics"""
-    wordsInDocuments = fields.Int()
-    wordsInComments = fields.Int()
-
-
 class CorpusMetricsSchema(Schema):
     """Schema of the corpus metrics included in the corpus metadata"""
-    documents = fields.Int()
-    chapters = fields.Int()
-    paragraphs = fields.Int()
-    characters = fields.Int()
-    male = fields.Int()
-    female = fields.Int()
-    nonbinary = fields.Int()
-    comments = fields.Int()
-    wordcount = fields.Nested(WordCountSchema, required=True)
+    documents = fields.Int(required=False)
+    chapters = fields.Int(required=False)
+    paragraphs = fields.Int(required=False)
+    characters = fields.Int(required=False)
+    male = fields.Int(required=False)
+    female = fields.Int(required=False)
+    nonbinary = fields.Int(required=False)
+    comments = fields.Int(required=False)
+    wordsInDocuments = fields.Int(required=False)
+    wordsInComments = fields.Int(required=False)
 
 
 class ExternalReferenceSchema(Schema):

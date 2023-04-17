@@ -1,5 +1,6 @@
 from sparql import DB
-from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym
+from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId
+from schemas import CorpusSchema
 
 
 class Corpus:
@@ -8,10 +9,12 @@ class Corpus:
     Attributes:
         database (DB): Database Connection
         uri (str): URI of the corpus
-        name (str) : Name of the corpus (an identifier)
+        id (str): ID of the corpus
+        name (str) : Name of the corpus (an identifier; DEPRECATED!!!)
         acronym (str) : Acronym of the corpus
-        title (str) : Title of the corpus
         description (str) : Description of the corpus
+        licence (dict) : Licence
+        repository (dic) : Repository
         metrics (dict) : Metrics of a corpus
     """
     # Database connection
@@ -19,27 +22,47 @@ class Corpus:
 
     uri = None
 
-    name = None
+    id = None
+
+    name = None # This is deprecated!
 
     acronym = None
-
-    # Title of the Corpus
-    title = None
 
     # Description of the Corpus
     description = None
 
+    # Licence
+    licence = None
+
+    # Repository
+    repository = None
+
     # Metrics of the corpus
     metrics = None
 
-    def __init__(self, database: DB = None, uri: str = None, name: str = None, acronym: str = None):
+    def __init__(self,
+                 database: DB = None,
+                 uri: str = None,
+                 id: str = None,
+                 name: str = None,
+                 acronym: str = None,
+                 description: str = None,
+                 licence: dict = None,
+                 repository: dict = None,
+                 metrics: dict = None
+                 ):
         """
 
         Args:
             database: connection to a triple store. Use instance of class DB.
             uri (str): URI of the corpus
-            name (str): Identifier (name) of the corpus
-
+            id (str): ID of the corpus
+            name (str): Identifier (name) of the corpus (DEPRECATED!!)
+            acronym: Acronym of the corpus
+            description (str): Description of the corpus
+            licence (dict): Licence Information
+            repository (dict): Repository Information
+            metrics (dict): Corpus Metrics
         """
         if database:
             self.database = database
@@ -47,17 +70,39 @@ class Corpus:
         if uri:
             self.uri = uri
 
+        if id:
+            self.id = id
+        else:
+            # try to SPARQL the ID
+            try:
+                self.get_id()
+            except:
+                pass
+
+        # Name is somewhat deprecated
         if name:
             self.name = name
         else:
             # try to sparql the name from the knowledge graph
             try:
-                self = self.get_name()
+                self.get_name()
             except:
                 pass
 
         if acronym:
             self.acronym = acronym
+
+        if description:
+            self.description = description
+
+        if licence:
+            self.licence = licence
+
+        if repository:
+            self.repository = repository
+
+        if metrics:
+            self.metrics = metrics
 
     def get_metrics(self, use_mapping: bool = False) -> dict:
         """Assemble and return corpus metrics.
@@ -129,10 +174,40 @@ class Corpus:
             else:
                 raise Exception("Can not retrieve metrics without database connection.")
 
+    def get_id(self) -> str:
+        """Get id of a corpus.
+
+        Uses SPARQL query "CorpusId" of the module "sparql_queries".
+
+        """
+        if self.id:
+            return self.id
+        else:
+            if self.database:
+                if self.uri:
+                    query = CorpusId()
+                    query.prepare()
+                    query.inject([self.uri])
+                    query.execute(self.database)
+                    results = query.results.simplify()
+
+                    if len(results) > 0:
+                        self.id = results[0]
+                        return self.id
+                    else:
+                        raise Exception("No ID in the knowledge graph.")
+
+                else:
+                    raise Exception("URI of corpus is not set.")
+            else:
+                raise Exception("Can't retrieve ID without database connection.")
+
     def get_name(self) -> str:
         """Get name of a corpus.
 
         Uses SPARQL query "CorpusName" of the module "sparql_queries".
+
+        corpus_name as Identifier is a deprecated construct. Should be removed.
         """
         if self.name:
             return self.name
@@ -185,26 +260,52 @@ class Corpus:
             else:
                 raise Exception("Can't retrieve acronym without database connection.")
 
-    def get_metadata(self, include_metrics: bool = False) -> dict:
+    def get_description(self) -> str:
+        """Get description of a corpus"""
+        if self.description:
+            return self.description
+
+    def get_licence(self) -> dict:
+        """Get licence of a corpus"""
+        if self.licence:
+            return self.licence
+
+    def get_repository(self) -> dict:
+        """Get repository of a corpus"""
+        if self.repository:
+            return self.repository
+
+    def get_metadata(self, include_metrics: bool = False, validation: bool = False) -> dict:
         """Serialize Corpus Metadata.
 
         Args:
             include_metrics (bool, optional): Include metrics. Defaults to False.
+            validation (bool, optional): Validate with schema "Corpus".
 
         Returns:
             dict: Serialization of the corpus metadata.
         """
 
         metadata = dict(
+            id=self.id,
             uri=self.uri,
-            name=self.name,
-            title=self.title,
-            description=self.description,
-            acronym=self.get_acronym()
+            corpusName=self.get_name(),
+            acronym=self.get_acronym(),
+            corpusDescription=self.get_description(),
+            licence=self.get_licence()["name"],
+            licenceUrl=self.get_licence()["uri"],
+            repository=self.get_repository()["url"]
         )
 
         if include_metrics is True:
             # Use the hardcoded mappings by setting use_mapping to True
             metadata["metrics"] = self.get_metrics(use_mapping=True)
+
+        if validation:
+            try:
+                schema = CorpusSchema()
+                schema.load(metadata)
+            except:
+                raise Exception("Could not validate metadata!")
 
         return metadata
