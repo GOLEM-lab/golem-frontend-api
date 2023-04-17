@@ -1,7 +1,7 @@
 from sparql import DB
 from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId
 from schemas import CorpusSchema
-from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal
+from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
 
 
@@ -323,14 +323,72 @@ class Corpus:
         GD = Namespace(golem_query.get_prefix_uri("gd"))
         CRM = Namespace(golem_query.get_prefix_uri("crm"))
         CLS = Namespace(golem_query.get_prefix_uri("cls"))
+        TYPE = Namespace(golem_query.get_prefix_uri("gt"))
 
         g = Graph()
         # add the prefixes
         for item in golem_query.prefixes:
             g.namespace_manager.bind(item["prefix"], URIRef(item["uri"]))
 
-        g.add((GD[self.id], RDF.type, CLS.X1_Corpus))
-        g.add((GD[self.id], RDFS.label, Literal(self.name)))
+        # instantiate corpus
+        g.add((URIRef(self.uri), RDF.type, CLS.X1_Corpus))
+
+        # id of corpus
+        if self.id:
+            id_uri = self.uri + "/id"
+            g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(id_uri)))
+
+            # Corpus ID as Identifier
+            g.add((URIRef(id_uri), RDF.type, CRM.E42_Identifier))
+            g.add((URIRef(id_uri), CRM.P2_has_type, TYPE.id))
+            g.add((URIRef(id_uri), RDF.value, Literal(self.id)))
+
+        # rdfs label and name as appellation
+        if self.name:
+            g.add((URIRef(self.uri), RDFS.label, Literal(self.name)))
+
+            name_uri = self.uri + "/corpus_name"
+            g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(name_uri)))
+
+            # Corpus name a Appellation...
+            g.add((URIRef(name_uri), RDF.type, CRM.E41_Appellation))
+            g.add((URIRef(name_uri), CRM.P2_has_type, TYPE.corpus_name))
+            g.add((URIRef(name_uri), CRM.P1i_identifies, URIRef(self.uri)))
+            g.add((URIRef(name_uri), RDF.value, Literal(self.name)))
+
+        # Acronym
+        if self.acronym:
+            acronym_uri = self.uri + "/acronym"
+            g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(acronym_uri)))
+
+            # Acronym a Appellation...
+            g.add((URIRef(URIRef(acronym_uri)), RDF.type, CRM.E41_Appellation))
+            g.add((URIRef(acronym_uri), CRM.P1i_identifies, URIRef(self.uri)))
+            g.add((URIRef(acronym_uri), RDF.value, Literal(self.acronym)))
+
+        # Description
+        if self.description:
+            g.add((URIRef(self.uri), CRM.P3_has_note, Literal(self.description)))
+
+        if self.licence:
+            right_uri = self.uri + "/licence"
+            g.add((URIRef(self.uri), CRM.P104_is_subject_to, URIRef(right_uri)))
+
+            # E30 Right
+            # TODO: Check this!
+            g.add((URIRef(right_uri), RDF.type, CRM.E30_Right))
+            g.add((URIRef(right_uri), CRM.P3_has_note, Literal(self.licence["name"])))
+            g.add((URIRef(right_uri), CRM.P67_refers_to, URIRef(self.licence["uri"])))
+
+        if self.metrics:
+            for key in self.metrics.keys():
+                dim_uri = self.uri + "/dimension/" + key
+                g.add((URIRef(self.uri), CRM.P43_has_dimension, URIRef(dim_uri)))
+
+                g.add((URIRef(dim_uri), RDF.type, CRM.E54_Dimension))
+                # I assume, they are all integers
+                g.add((URIRef(dim_uri), CRM.P90_has_value, Literal(self.metrics[key], datatype=XSD.int)))
+                # TODO: add a Unit
 
         return g
 
