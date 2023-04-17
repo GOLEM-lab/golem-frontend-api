@@ -27,21 +27,6 @@ class CorpusMetrics(Schema):
     wordcount = fields.Nested(WordCount, required=True)
 
 
-# TODO: maybe merge schemas Corpus and CorpusMetadata with the one below; use optional fields
-class CorpusMetadata(Schema):
-    """Schema of the corpus metadata
-
-    Included in the response of the /corpora endpoint
-    """
-    name = fields.Str()
-    uri = fields.Str()
-    title = fields.Str()
-    acronym = fields.Str()
-    description = fields.Str()
-    metrics = fields.Nested(CorpusMetrics, required=False)
-    repository = fields.Str()
-
-
 class ExternalReference(Schema):
     """Item in External Reference Ressource"""
     ref = fields.Str()
@@ -53,8 +38,6 @@ class Author(Schema):
     id = fields.Str()
     uri = fields.Str() # maybe should add that
     authorName = fields.Str()
-    authorFullname = fields.Str()
-    authorShortname = fields.Str()
     refs = fields.Nested(ExternalReference)
 
 
@@ -64,7 +47,7 @@ class Character(Schema):
     uri = fields.Str() # would add that
     characterName = fields.Str()
     entryName = fields.Str()
-    wikidataId = fields.Str() # Maybe harmonize with author (refs)?
+    refs = fields.Nested(ExternalReference, required=False)
     source = fields.Str() # Maybe sourceName
     sourceUrl = fields.Str
     createdYear = fields.Int()
@@ -76,14 +59,14 @@ class Character(Schema):
 
 class Corpus(Schema):
     """Schema of the corpus.
-
-    Returned by the /corpora/{corpusname} endpoint
     """
-    name = fields.Str()
+    id = fields.Str()
     uri = fields.Str()
-    title = fields.Str()
+    corpusName = fields.Str()
+    acronym = fields.Str()
+    description = fields.Str(required=False)
     licence = fields.Str()
     licenceUrl = fields.Str()
-    repository = fields.Str()
-    characters = fields.Nested(Character)
-
+    repository = fields.Str(required=False)
+    metrics = fields.Nested(CorpusMetrics, required=False)
+    characters = fields.Nested(Character, required=False)
