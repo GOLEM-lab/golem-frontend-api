@@ -39,12 +39,12 @@ class AuthorSchema(Schema):
 class CharacterSchema(Schema):
     """Metadata on a single character"""
     id = fields.Str()
-    uri = fields.Str() # would add that
+    uri = fields.Str()
     characterName = fields.Str()
     entryName = fields.Str()
     refs = fields.Nested(ExternalReferenceSchema, required=False)
     sourceName = fields.Str()
-    sourceUrl = fields.Str
+    sourceUrl = fields.Str()
     createdYear = fields.Int()
     firstFanficYear = fields.Int()
     numDocuments = fields.Int()

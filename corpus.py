@@ -294,6 +294,7 @@ class Corpus:
             corpusName=self.get_name(),
             acronym=self.get_acronym(),
             corpusDescription=self.get_description(),
+            # TODO: fix this!
             licence=self.get_licence()["name"],
             licenceUrl=self.get_licence()["uri"],
             repository=self.get_repository()["url"]
@@ -320,7 +321,6 @@ class Corpus:
 
         # needed for the prefixes
         golem_query = GolemQuery()
-        GD = Namespace(golem_query.get_prefix_uri("gd"))
         CRM = Namespace(golem_query.get_prefix_uri("crm"))
         CLS = Namespace(golem_query.get_prefix_uri("cls"))
         TYPE = Namespace(golem_query.get_prefix_uri("gt"))
@@ -363,6 +363,7 @@ class Corpus:
 
             # Acronym a Appellation...
             g.add((URIRef(URIRef(acronym_uri)), RDF.type, CRM.E41_Appellation))
+            g.add((URIRef(acronym_uri), CRM.P2_has_type, TYPE.corpus_acronym))
             g.add((URIRef(acronym_uri), CRM.P1i_identifies, URIRef(self.uri)))
             g.add((URIRef(acronym_uri), RDF.value, Literal(self.acronym)))
 
