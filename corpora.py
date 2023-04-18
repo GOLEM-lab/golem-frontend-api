@@ -1,6 +1,6 @@
 from corpus import Corpus
 from sparql import DB
-from sparql_queries import CorporaUris, CorporaUrisNames
+from sparql_queries import CorporaUris, CorporaUrisIds
 
 
 class Corpora:
@@ -77,7 +77,7 @@ class Corpora:
     def load(self) -> bool:
         """Load corpora from Knowledge Graph
 
-        Uses a SPARQL Query of class "CorporaUrisNames" of the module "sparql_queries" for fetch the available data
+        Uses a SPARQL Query of class "CorporaUrisIds" of the module "sparql_queries" for fetch the available data
         from the Knowledge Graph.
 
         Returns:
@@ -88,15 +88,15 @@ class Corpora:
             self.corpora = dict()
 
         if self.database:
-            query = CorporaUrisNames()
+            query = CorporaUrisIds()
             query.prepare()
             query.execute(self.database)
             results = query.results.simplify()
 
             for item in results:
-                name = item["corpus_name"]
+                id = item["corpus_id"]
                 uri = item["corpus_uri"]
-                corpus = Corpus(database=self.database, uri=uri, name=name)
+                corpus = Corpus(database=self.database, uri=uri, id=id)
                 self.add_corpus(corpus)
         else:
             raise Exception("Can not load corpora without database")
@@ -104,7 +104,7 @@ class Corpora:
     def add_corpus(self, corpus: Corpus) -> bool:
         """Add a corpus instance.
 
-        Stores a corpus (instance of class Corpus) in the class' attribute "corpora" with corpus.name as key.
+        Stores a corpus (instance of class Corpus) in the class' attribute "corpora" with corpus.id as key.
 
         Args:
             corpus (Corpus): Instance of class "Corpus".
@@ -112,8 +112,8 @@ class Corpora:
         Returns:
             bool: True if successful.
         """
-        if corpus.name:
-            self.corpora[corpus.name] = corpus
+        if corpus.id:
+            self.corpora[corpus.id] = corpus
             return True
 
     def list_corpora(self, include_metrics: bool = False) -> list:
@@ -127,10 +127,10 @@ class Corpora:
         """
         corpus_list = list()
         if self.corpora:
-            for corpus_name in self.corpora.keys():
+            for corpus_id in self.corpora.keys():
                 # this assumes, that a database connection is defined inside the corpus
                 # TODO: handle the error of missing database connection
-                corpus_item = self.corpora[corpus_name].get_metadata(include_metrics=include_metrics)
+                corpus_item = self.corpora[corpus_id].get_metadata(include_metrics=include_metrics)
                 corpus_list.append(corpus_item)
         return corpus_list
 

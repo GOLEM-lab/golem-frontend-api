@@ -18,7 +18,11 @@ class GolemQuery(SparqlQuery):
     prefixes = [
         {
             "prefix": "gd",
-            "uri": "http://golemlab.eu/data/"
+            "uri": "http://data.golemlab.eu/data/"
+        },
+        {
+            "prefix": "gt",
+            "uri": "http://data.golemlab.eu/data/entity/type/"
         },
         {
             "prefix": "crm",
@@ -81,8 +85,28 @@ class CorporaUrisNames(GolemQuery):
         ?corpus_uri a cls:X1_Corpus ;
             crm:P1_is_identified_by ?nameID .
         
-        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+        ?nameID crm:P2_has_type gt:corpus_name ; 
             rdf:value ?corpus_name .
+    }
+    """
+
+
+class CorporaUrisIds(GolemQuery):
+    """SPARQL Query: URIs and Corpus Ids of all Corpora"""
+
+    label = "URIs and IDs of Corpora"
+
+    description = """
+    Get URIs and IDs of corpora (cls:X1_Corpus) in the Knowledge Graph.
+    """
+
+    query = """
+    SELECT ?corpus_uri, ?corpus_id WHERE {
+        ?corpus_uri a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?nodeID .
+
+        ?nodeID crm:P2_has_type gt:id ; 
+            rdf:value ?corpus_id .
     }
     """
 
@@ -101,8 +125,36 @@ class CorpusName(GolemQuery):
         <$1> a cls:X1_Corpus ;
             crm:P1_is_identified_by ?nameID .
 
-        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+        ?nameID crm:P2_has_type gt:corpus_name ; 
             rdf:value ?name .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+
+class CorpusId(GolemQuery):
+    """SPARQL Query: ID by CorpusURI"""
+
+    label = "ID of Corpus"
+
+    description = """
+    Get ID of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?id WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P1_is_identified_by ?node .
+
+        ?node crm:P2_has_type gt:id ; 
+            rdf:value ?id .
     }
     """
 
@@ -129,7 +181,7 @@ class CorpusAcronym(GolemQuery):
         <$1> a cls:X1_Corpus ;
             crm:P1_is_identified_by ?acronymID .
 
-        ?acronymID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_acronym> ;
+        ?acronymID crm:P2_has_type gt:corpus_acronym ;
             rdf:value ?acronym .
     }
     """
@@ -157,10 +209,10 @@ class CorpusNameAcronym(GolemQuery):
         <$1> a cls:X1_Corpus ;
             crm:P1_is_identified_by ?nameID, ?acronymID .
 
-        ?nameID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_name> ; 
+        ?nameID crm:P2_has_type gt:corpus_name ; 
             rdf:value ?name .
             
-        ?acronymID crm:P2_has_type <http://golemlab.eu/data/entity/type/corpus_acronym> ;
+        ?acronymID crm:P2_has_type gt:corpus_acronym ;
             rdf:value ?acronym .
     }
     """

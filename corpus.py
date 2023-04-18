@@ -294,11 +294,19 @@ class Corpus:
             corpusName=self.get_name(),
             acronym=self.get_acronym(),
             corpusDescription=self.get_description(),
-            # TODO: fix this!
-            licence=self.get_licence()["name"],
-            licenceUrl=self.get_licence()["uri"],
-            repository=self.get_repository()["url"]
         )
+
+        licence_data = self.get_licence()
+        if licence_data:
+            if "name" in licence_data:
+                metadata["licence"] = licence_data["name"]
+            if "uri" in licence_data:
+                metadata["licenceUrl"] = licence_data["uri"]
+
+        repository_data = self.get_repository()
+        if repository_data:
+            if "url" in repository_data:
+                metadata["repository"] = repository_data["url"]
 
         if include_metrics is True:
             # Use the hardcoded mappings by setting use_mapping to True

@@ -1,7 +1,7 @@
 import flask
 from flask import jsonify, Response, send_from_directory, request
 from apidoc import spec
-from schemas import ApiInfo, CorpusMetadata
+from schemas import ApiInfoSchema, CorpusSchema
 from sparql import DB
 from corpora import Corpora
 import os
@@ -112,7 +112,7 @@ def get_info():
                 description: Information about the API
                 content:
                     application/json:
-                        schema: ApiInfo
+                        schema: ApiInfoSchema
     """
 
     data = dict(
@@ -122,7 +122,7 @@ def get_info():
     )
     # To make sure, that the response matches the schema defined in the OpenAPI
     # we validate this data using the InfoResponse Schema.
-    schema = ApiInfo()
+    schema = ApiInfoSchema()
     schema.load(data)
 
     return jsonify(schema.dump(data))
@@ -154,7 +154,7 @@ def get_corpora():
                     application/json:
                         schema:
                             type: array
-                            items: CorpusMetadata
+                            items: CorpusSchema
             400:
                 description: Invalid value of parameter "include".
                 content:
@@ -182,24 +182,24 @@ def get_corpora():
     return jsonify(response_data)
 
 
-@api.route("/corpora/<path:corpusname>", methods=["GET"])
+@api.route("/corpora/<path:corpus_id>", methods=["GET"])
 def get_corpus_metadata(corpusname: str):
     """Get Metadata on a single corpus
 
     Args:
-        corpusname: ID/name of the corpus.
+        corpus_id: ID of the corpus.
 
     ---
     get:
         summary: Corpus Metadata
         description: Returns metadata on a corpus. Unlike the DraCor API the response does not contain information
-            on included items (works, characters). Use the endpoint ``/corpora/{corpusname}/characters`` instead.
+            on included items (works, characters). Use the endpoint ``/corpora/{corpus_id}/characters`` instead.
         operationId: get_corpus_metadata
         summary: Corpus Metadata
         parameters:
             -   in: path
-                name: corpusname
-                description: Name/ID of the corpus.
+                name: corpus_id
+                description: ID of the corpus.
                 required: true
                 example: potter_corpus
                 schema:
@@ -211,15 +211,15 @@ def get_corpus_metadata(corpusname: str):
                     application/json:
                         schema: CorpusMetadata
             404:
-                description: No such corpus. Parameter ``corpusname`` is invalid. A list of valid values can be
+                description: No such corpus. Parameter ``corpus_id`` is invalid. A list of valid values can be
                     retrieved via the ``/corpora`` endpoint.
                 content:
                     text/plain:
                         schema:
                             type: string
     """
-    if corpusname in corpora.corpora:
-        metadata = corpora.corpora[corpusname].get_metadata(include_metrics=True)
+    if corpus_id in corpora.corpora:
+        metadata = corpora.corpora[corpus_id].get_metadata(include_metrics=True)
 
         # TODO: Validate response before returning
         # Validate response with schema "CorpusMetadata"
@@ -230,7 +230,7 @@ def get_corpus_metadata(corpusname: str):
         return jsonify(metadata)
 
     else:
-        return Response(f"No such corpus: {corpusname}", status=404,
+        return Response(f"No such corpus: {corpus_id}", status=404,
                         mimetype="text/plain")
 
 
