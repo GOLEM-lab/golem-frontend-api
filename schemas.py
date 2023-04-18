@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 class ApiInfoSchema(Schema):
@@ -40,7 +40,9 @@ class CharacterSchema(Schema):
     """Metadata on a single character"""
     id = fields.Str()
     uri = fields.Str()
+    characterType = fields.Str(validate=validate.OneOf(["canon", "fanon"]))
     characterName = fields.Str()
+    characterGender = fields.Str(validate=validate.OneOf(["male", "female", "nonbinary"]))
     entryName = fields.Str()
     refs = fields.Nested(ExternalReferenceSchema, required=False)
     sourceName = fields.Str()
