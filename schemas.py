@@ -31,7 +31,7 @@ class ExternalReferenceSchema(Schema):
 class AuthorSchema(Schema):
     """Metadata on a single author"""
     id = fields.Str()
-    uri = fields.Str() # maybe should add that
+    uri = fields.Str()
     authorName = fields.Str()
     refs = fields.Nested(ExternalReferenceSchema)
 

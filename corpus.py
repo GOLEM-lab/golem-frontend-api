@@ -1,5 +1,5 @@
 from sparql import DB
-from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId
+from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId, CorpusCharacterConceptUris
 from schemas import CorpusSchema
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
@@ -282,7 +282,7 @@ class Corpus:
 
         Args:
             include_metrics (bool, optional): Include metrics. Defaults to False.
-            validation (bool, optional): Validate with schema "Corpus".
+            validation (bool, optional): Validate with schema "CorpusSchema".
 
         Returns:
             dict: Serialization of the corpus metadata.
@@ -320,6 +320,18 @@ class Corpus:
                 raise Exception("Could not validate metadata!")
 
         return metadata
+
+    def get_character_uris(self):
+        """Get URIs of characters of a corpus
+
+        Uses SPARQL Query of class "CorpusCharacterConceptUris" from sparql_queries.py.
+        """
+        query = CorpusCharacterConceptUris()
+        query.prepare()
+        query.inject([self.uri])
+        query.execute(self.database)
+        results = query.results.simplify()
+        return results
 
     def generate_graph(self) -> Graph:
         """Generate graph data of corpus.

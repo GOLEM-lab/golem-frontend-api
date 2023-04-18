@@ -251,3 +251,30 @@ class CorpusMetrics(GolemQuery):
             "description": "URI of a Corpus."
         }
     ]
+
+
+class CorpusCharacterConceptUris(GolemQuery):
+    """SPARQL Query: URIs of Character in a Corpus"""
+
+    label = "Corpus Character URIs"
+
+    description = """
+    Get URIs of Characters (go:C1_Character_Concept) of a single corpus in the Knowledge Graph.
+    """
+
+    query = """
+    SELECT ?character_uri WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P148_has_component ?character_uri.
+
+        ?character_uri a go:C1_Character_Concept . 
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]

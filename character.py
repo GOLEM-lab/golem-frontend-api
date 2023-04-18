@@ -1,6 +1,7 @@
 from sparql import DB
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
+from schemas import CharacterSchema
 
 
 class Character:
@@ -130,6 +131,7 @@ class Character:
         CLS = Namespace(golem_query.get_prefix_uri("cls"))
         TYPE = Namespace(golem_query.get_prefix_uri("gt"))
         GO = Namespace(golem_query.get_prefix_uri("go"))
+        GD = Namespace(golem_query.get_prefix_uri("gd"))
 
         g = Graph()
         # add the prefixes
@@ -169,5 +171,54 @@ class Character:
 
         # TODO: entry name
 
+        # Corpus ids
+        # Corpora, that the character is part of
+        if self.corpus_ids:
+            for corpus_id in self.corpus_ids:
+                # TODO: evaluate if this is the best idea to model it.
+                g.add((GD[corpus_id], CRM.P148_has_component, URIRef(self.uri)))
+                g.add((URIRef(self.uri), CRM.P148i_is_component_of, GD[corpus_id]))
+
         return g
 
+    def get_metadata(self, validation: bool = False) -> dict:
+        """Serialize Character Metadata.
+
+        Args:
+            validation (bool, optional): Validate with schema "CharacterSchema".
+
+        Returns:
+            dict: Serialization of the character metadata.
+        """
+
+        metadata = dict(
+            id=self.id,
+            uri=self.uri
+        )
+
+        # TODO: implement:
+        """
+                id = fields.Str()
+            uri = fields.Str()
+            characterType = fields.Str(validate=validate.OneOf(["canon", "fanon"]))
+            characterName = fields.Str()
+            characterGender = fields.Str(validate=validate.OneOf(["male", "female", "nonbinary"]))
+            entryName = fields.Str()
+            refs = fields.Nested(ExternalReferenceSchema, required=False)
+            sourceName = fields.Str()
+            sourceUrl = fields.Str()
+            createdYear = fields.Int()
+            firstFanficYear = fields.Int()
+            numDocuments = fields.Int()
+            characterCsvUrl = fields.Str()
+            authors = fields.Nested(AuthorSchema)
+                """
+
+        if validation:
+            try:
+                schema = CharacterSchema()
+                schema.load(metadata)
+            except:
+                raise Exception("Could not validate metadata!")
+
+        return metadata
