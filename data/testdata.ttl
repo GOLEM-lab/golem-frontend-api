@@ -1,0 +1,88 @@
+@prefix cls: <http://clscor.io/ontology/> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix gd: <http://data.golemlab.eu/data/> .
+@prefix go: <http://golemlab.eu/ontology/> .
+@prefix gt: <http://data.golemlab.eu/data/entity/type/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+gd:C000000001 a go:C1_Character_Concept ;
+    rdfs:label "Harry Potter" ;
+    crm:P148i_is_component_of gd:potter_corpus ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
+        <http://data.golemlab.eu/data/C000000001/id> ;
+    crm:P2_has_type gt:canon_character,
+        <http://data.golemlab.eu/data/entity/type/gender/male> .
+
+<http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
+    crm:P2_has_type gt:character_name ;
+    rdf:value "Harry Potter" .
+
+<http://data.golemlab.eu/data/C000000001/id> a crm:E42_Identifier ;
+    crm:P2_has_type gt:id ;
+    rdf:value "C000000001" .
+
+<http://data.golemlab.eu/data/potter_corpus/acronym> a crm:E41_Appellation ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type gt:corpus_acronym ;
+    rdf:value "potter" .
+
+<http://data.golemlab.eu/data/potter_corpus/corpus_name> a crm:E41_Appellation ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type gt:corpus_name ;
+    rdf:value "Harry Potter Corpus" .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/chapters> a crm:E54_Dimension ;
+    crm:P90_has_value "500"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/characters> a crm:E54_Dimension ;
+    crm:P90_has_value "4000"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/comments> a crm:E54_Dimension ;
+    crm:P90_has_value "7000"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/female> a crm:E54_Dimension ;
+    crm:P90_has_value "1990"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/male> a crm:E54_Dimension ;
+    crm:P90_has_value "1990"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/nonbinary> a crm:E54_Dimension ;
+    crm:P90_has_value "20"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/paragraphs> a crm:E54_Dimension ;
+    crm:P90_has_value "9000"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/wordsInComments> a crm:E54_Dimension ;
+    crm:P90_has_value "20000"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/dimension/wordsInDocuments> a crm:E54_Dimension ;
+    crm:P90_has_value "500000"^^xsd:int .
+
+<http://data.golemlab.eu/data/potter_corpus/id> a crm:E42_Identifier ;
+    crm:P2_has_type gt:id ;
+    rdf:value "potter_corpus" .
+
+<http://data.golemlab.eu/data/potter_corpus/licence> a crm:E30_Right ;
+    crm:P3_has_note "CC0" ;
+    crm:P67_refers_to <https://creativecommons.org/publicdomain/zero/1.0> .
+
+gd:potter_corpus a cls:X1_Corpus ;
+    rdfs:label "Harry Potter Corpus" ;
+    crm:P104_is_subject_to <http://data.golemlab.eu/data/potter_corpus/licence> ;
+    crm:P148_has_component gd:C000000001 ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/potter_corpus/acronym>,
+        <http://data.golemlab.eu/data/potter_corpus/corpus_name>,
+        <http://data.golemlab.eu/data/potter_corpus/id> ;
+    crm:P3_has_note "Harry Potter Corpus derived form AO3." ;
+    crm:P43_has_dimension <http://data.golemlab.eu/data/potter_corpus/dimension/chapters>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/characters>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/comments>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/female>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/male>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/nonbinary>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/paragraphs>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInComments>,
+        <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInDocuments> .
+
