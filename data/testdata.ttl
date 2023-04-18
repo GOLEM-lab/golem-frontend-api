@@ -3,17 +3,12 @@
 @prefix gd: <http://data.golemlab.eu/data/> .
 @prefix go: <http://golemlab.eu/ontology/> .
 @prefix gt: <http://data.golemlab.eu/data/entity/type/> .
+@prefix lrm: <http://www.cidoc-crm.org/cidoc-crm/lrmoo/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-gd:C000000001 a go:C1_Character_Concept ;
-    rdfs:label "Harry Potter" ;
-    crm:P148i_is_component_of gd:potter_corpus ;
-    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
-        <http://data.golemlab.eu/data/C000000001/id> ;
-    crm:P2_has_type gt:canon_character,
-        <http://data.golemlab.eu/data/entity/type/gender/male> .
+gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creation> .
 
 <http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
     crm:P2_has_type gt:character_name ;
@@ -22,6 +17,26 @@ gd:C000000001 a go:C1_Character_Concept ;
 <http://data.golemlab.eu/data/C000000001/id> a crm:E42_Identifier ;
     crm:P2_has_type gt:id ;
     rdf:value "C000000001" .
+
+<http://data.golemlab.eu/data/C000000002/character_name> a crm:E41_Appellation ;
+    crm:P2_has_type gt:character_name ;
+    rdf:value "Hermione Granger" .
+
+<http://data.golemlab.eu/data/C000000002/id> a crm:E42_Identifier ;
+    crm:P2_has_type gt:id ;
+    rdf:value "C000000002" .
+
+<http://data.golemlab.eu/data/W000000001/creation/ts> a crm:E52_Time-Span ;
+    crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000001/creation> ;
+    rdf:value "1997" .
+
+<http://data.golemlab.eu/data/W000000001/id> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:W000000001 ;
+    crm:P2_has_type gt:id ;
+    rdf:value "W000000001" .
+
+<http://data.golemlab.eu/data/W000000001/title> a crm:E35_Title ;
+    rdf:value "Harry Potter and the Philosopher's Stone" .
 
 <http://data.golemlab.eu/data/potter_corpus/acronym> a crm:E41_Appellation ;
     crm:P1i_identifies gd:potter_corpus ;
@@ -68,10 +83,35 @@ gd:C000000001 a go:C1_Character_Concept ;
     crm:P3_has_note "CC0" ;
     crm:P67_refers_to <https://creativecommons.org/publicdomain/zero/1.0> .
 
+gd:C000000001 a go:C1_Character_Concept ;
+    rdfs:label "Harry Potter" ;
+    crm:P148i_is_component_of gd:potter_corpus ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
+        <http://data.golemlab.eu/data/C000000001/id> ;
+    crm:P2_has_type gt:canon_character,
+        <http://data.golemlab.eu/data/entity/type/gender/male> ;
+    crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
+
+gd:C000000002 a go:C1_Character_Concept ;
+    rdfs:label "Hermione Granger" ;
+    crm:P148i_is_component_of gd:potter_corpus ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000002/character_name>,
+        <http://data.golemlab.eu/data/C000000002/id> ;
+    crm:P2_has_type gt:canon_character,
+        <http://data.golemlab.eu/data/entity/type/gender/female> ;
+    crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
+
+gd:W000000001 a lrm:F1_Work ;
+    rdfs:label "Harry Potter and the Philosopher's Stone" ;
+    crm:P102_has_title <http://data.golemlab.eu/data/W000000001/title> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000001/id> ;
+    lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
+
 gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Harry Potter Corpus" ;
     crm:P104_is_subject_to <http://data.golemlab.eu/data/potter_corpus/licence> ;
-    crm:P148_has_component gd:C000000001 ;
+    crm:P148_has_component gd:C000000001,
+        gd:C000000002 ;
     crm:P1_is_identified_by <http://data.golemlab.eu/data/potter_corpus/acronym>,
         <http://data.golemlab.eu/data/potter_corpus/corpus_name>,
         <http://data.golemlab.eu/data/potter_corpus/id> ;
@@ -85,4 +125,11 @@ gd:potter_corpus a cls:X1_Corpus ;
         <http://data.golemlab.eu/data/potter_corpus/dimension/paragraphs>,
         <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInComments>,
         <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInDocuments> .
+
+<http://data.golemlab.eu/data/W000000001/creation> a lrm:F27_Work_Creation ;
+    crm:P14_carried_out_by gd:A000000001 ;
+    crm:P4_has_time-span <http://data.golemlab.eu/data/W000000001/creation/ts> ;
+    crm:P94_has_created gd:C000000001,
+        gd:C000000002 ;
+    lrm:R16_created gd:W000000001 .
 
