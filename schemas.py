@@ -43,7 +43,6 @@ class CharacterSchema(Schema):
     characterType = fields.Str(validate=validate.OneOf(["canon", "fanon"]))
     characterName = fields.Str()
     characterGender = fields.Str(validate=validate.OneOf(["male", "female", "nonbinary"]))
-    entryName = fields.Str()
     refs = fields.Nested(ExternalReferenceSchema, required=False)
     sourceName = fields.Str()
     sourceUrl = fields.Str()

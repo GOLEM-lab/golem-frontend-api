@@ -14,7 +14,6 @@ class Character:
         character_type (str): Type of the character. Values are "fanon" or "canon"
         name (str): Name of the character
         gender (str): Gender of the character. Values are "male", "female", "nonbinary"
-        entry_name (str): Entry Name ?
         refs (list): Links to external reference resources
         source (dict): Information on the source
         years (dict): Information on years
@@ -34,8 +33,6 @@ class Character:
 
     gender = None
 
-    entry_name = None
-
     refs = None
 
     source = None
@@ -53,7 +50,6 @@ class Character:
                  character_type: str = None,
                  name: str = None,
                  gender: str = None,
-                 entry_name: str = None,
                  source: dict = None,
                  years: dict = None,
                  metrics: dict = None,
@@ -69,7 +65,6 @@ class Character:
             character_type (str): Type of character. Values are "canon" or "fanon".
             name (str): Name of the character
             gender (str): Gender. Values: "male", "female", "nonbinary"
-            entry_name (str): Entry Name?
             source (dict): Information on source
             years (dict): Information on years
             metrics (dict): Character metrics
@@ -100,9 +95,6 @@ class Character:
 
         if gender:
             self.gender = gender
-
-        if entry_name:
-            self.entry_name = entry_name
 
         if source:
             self.source = source
@@ -203,7 +195,6 @@ class Character:
             characterType = fields.Str(validate=validate.OneOf(["canon", "fanon"]))
             characterName = fields.Str()
             characterGender = fields.Str(validate=validate.OneOf(["male", "female", "nonbinary"]))
-            entryName = fields.Str()
             refs = fields.Nested(ExternalReferenceSchema, required=False)
             sourceName = fields.Str()
             sourceUrl = fields.Str()
