@@ -8,6 +8,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creation> .
+
 <http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
     crm:P2_has_type gt:character_name ;
     rdf:value "Harry Potter" .
@@ -23,6 +25,10 @@
 <http://data.golemlab.eu/data/C000000002/id> a crm:E42_Identifier ;
     crm:P2_has_type gt:id ;
     rdf:value "C000000002" .
+
+<http://data.golemlab.eu/data/W000000001/creation/ts> a crm:E52_Time-Span ;
+    crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000001/creation> ;
+    rdf:value 1997 .
 
 <http://data.golemlab.eu/data/W000000001/id> a crm:E42_Identifier ;
     crm:P1i_identifies gd:W000000001 ;
@@ -102,11 +108,6 @@ gd:W000000001 a lrm:F1_Work ;
     crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000001/id> ;
     lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
-<http://data.golemlab.eu/data/W000000001/creation> a lrm:F27_Work_Creation ;
-    crm:P94_has_created gd:C000000001,
-        gd:C000000002 ;
-    lrm:R16_created gd:W000000001 .
-
 gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Harry Potter Corpus" ;
     crm:P104_is_subject_to <http://data.golemlab.eu/data/potter_corpus/licence> ;
@@ -125,4 +126,11 @@ gd:potter_corpus a cls:X1_Corpus ;
         <http://data.golemlab.eu/data/potter_corpus/dimension/paragraphs>,
         <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInComments>,
         <http://data.golemlab.eu/data/potter_corpus/dimension/wordsInDocuments> .
+
+<http://data.golemlab.eu/data/W000000001/creation> a lrm:F27_Work_Creation ;
+    crm:P14_carried_out_by gd:A000000001 ;
+    crm:P4_has_time-span <http://data.golemlab.eu/data/W000000001/creation/ts> ;
+    crm:P94_has_created gd:C000000001,
+        gd:C000000002 ;
+    lrm:R16_created gd:W000000001 .
 
