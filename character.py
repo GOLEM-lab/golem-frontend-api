@@ -18,6 +18,7 @@ class Character:
         source (dict): Information on the source
         years (dict): Information on years
         refs (list): IDs in external reference resources
+        relations (list): Relations of the character
         metrics (dict): Character Metrics
         corpus_ids (list): IDs of the parent corpus
     """
@@ -42,6 +43,8 @@ class Character:
 
     refs = None
 
+    relations = None
+
     metrics = None
 
     corpus_ids = None
@@ -57,6 +60,7 @@ class Character:
                  years: dict = None,
                  metrics: dict = None,
                  refs: list = None,
+                 relations = None,
                  corpus_ids: list = None
                  ):
         """
@@ -72,6 +76,7 @@ class Character:
             years (dict): Information on years
             metrics (dict): Character metrics
             refs (list): Links to external Reference Resources
+            relations (list): Character relations
             corpus_ids (list): IDs of the corpora the character is contained in
         """
         if database:
@@ -110,6 +115,9 @@ class Character:
 
         if refs:
             self.refs = refs
+
+        if relations:
+            self.relations = relations
 
         if corpus_ids:
             self.corpus_ids = corpus_ids
@@ -186,6 +194,15 @@ class Character:
                 # TODO: evaluate if this is the best idea to model it.
                 g.add((GD[corpus_id], CRM.P148_has_component, URIRef(self.uri)))
                 g.add((URIRef(self.uri), CRM.P148i_is_component_of, GD[corpus_id]))
+
+        # Relations, e.g. derivative of
+        if self.relations:
+            # only focus on the "derivative_of" type of now:
+            filtered_relations = list(filter(lambda rel: "derivative_of" in rel["type"], self.relations))
+
+            for item in filtered_relations:
+                g.add((URIRef(self.uri), CRM.P130_shows_features_of, URIRef(golem_query.get_prefix_uri("gd") + item["id"])))
+                g.add((URIRef(golem_query.get_prefix_uri("gd") + item["id"]), CRM.P130i_features_are_also_found_on, URIRef(self.uri)))
 
         return g
 
