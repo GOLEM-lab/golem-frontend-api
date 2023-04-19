@@ -1,0 +1,278 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix crmcls: <https://clscor.io/ontologies/CRMcls/> .
+@prefix gd: <http://data.golemlab.eu/data/> .
+@prefix gt: <http://data.golemlab.eu/data/entity/type/> .
+@prefix golem: <http://golemlab.eu/ontology/> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix lrm: <http://www.cidoc-crm.org/cidoc-crm/lrmoo/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+
+# Note about IDs: for simplicity and cross-corpus inclusion, all entities (authors, works, characters)
+# are stored in the folder <http://data.golemlab.eu/data/data/>. The 10-digit ID is constructed using the template: type+num,
+# e.g. W000000001 is the first Work (W) in the database. Other types are A for authors and C for characters.
+
+# lines marked "todo:" are not needed for the API endpoint corpora/{corpus}
+
+# Define the Units for the Measurement in the Golem (Ontology)
+
+# I probably have to redefine unit_document and unit_character using the correct classes,
+# but I still haven't decided what to count: Work, Expression, Manifestation?
+
+# unit document
+golem:unit_document a crm:E85_Measurement_Unit ;
+    rdfs:label "Document" .
+
+# unit character (actor-like entity). This is temporary, until we define a class for it
+golem:unit_character a crm:E85_Measurement_Unit ;
+    rdfs:label "Character" .
+
+# A single corpus: Harry Potter Corpus (canon + fanfiction)
+gd:potter_corpus a crmcls:X1_Corpus ;
+    rdfs:label "Harry Potter Corpus" ;
+    crm:P148_has_component gd:W000000001 , gd:W000000002, gd:C000000001 , gd:C000000002 , gd:C000000003 ; # both canonical and fanfic Works and Characters
+    crm:P43_has_dimension <http://data.golemlab.eu/data/potter_corpus/measurement/number_of_documents> , # can I shorten this as gd:potter_corpus/measurement/number_of_documents ? IB: would have to test
+    <http://data.golemlab.eu/data/potter_corpus/measurement/number_of_characters> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/potter_corpus/corpus_name> ,
+    <http://data.golemlab.eu/data/potter_corpus/id> ;
+    <http://data.golemlab.eu/data/potter_corpus/corpus_acronym>;
+    crm:P3_has_note "Description of corpus" ;
+    crm:P104_is_subject_to <http://data.golemlab.eu/data/potter_corpus/licence> .
+    # crm:P???has_access_point <http://data.golemlab.eu/data/potter_corpus/repository> . # I don't need this but it's there for Dracor
+
+# A Corpus ID
+<http://data.golemlab.eu/data/potter_corpus/id> a crm:E42_Identifier;
+    crm:P2_has_type gt:id ;
+    rdf:value "potter_corpus" .
+
+# A licence
+<http://data.golemlab.eu/data/potter_corpus/licence> a crm:E30_Right ;
+    rdfs:label "CC0" ;
+    crm:P67i_is_referred_to_by <https://creativecommons.org/share-your-work/public-domain/cc0/> . # this is licenceUrl in the frontend
+    # see https://www.cidoc-crm.org/Issue/ID-328-rights-model
+
+<https://creativecommons.org/share-your-work/public-domain/cc0/> a crm:E73_Information_Object ;
+    rdfs:label "CC0 licence URL" ;
+    crm:P67_refers_to <http://data.golemlab.eu/data/potter_corpus/licence> .
+
+# A single work
+gd:W000000001 a lrm:F1_Work ;
+    rdfs:label "Work called Harry Potter and the Philospher's Stone" ;
+    crm:P102_has_title <http://data.golemlab.eu/data/W000000001/work_title> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000001/id> ;
+    lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/work_creation> .
+
+# A Work ID
+<http://data.golemlab.eu/data/W000000001/id> a crm:E42_Identifier;
+    crm:P2_has_type gt:id ;
+    rdf:value "W000000001" .
+
+# A work title
+<http://data.golemlab.eu/data/W000000001/work_title> a crm:E35_Title ;
+    rdfs:label "Title of Harry Potter and the Philospher's Stone" ;
+    crm:P1i_identifies gd:W000000001 ;
+    rdf:value "Harry Potter and the Philospher's Stone" .
+
+# An event of creation of a canonical work and characters
+<http://data.golemlab.eu/data/W000000001/work_creation> a lrm:F27_Work_Creation ;
+    rdfs:label "J. K. Rowling creating Harry Potter and the Philospher's Stone" ;
+    lrm:P14_carried_out_by <http://data.golemlab.eu/data/A000000001> ;
+    crm:P4_has_time-span <http://data.golemlab.eu/data/W000000001/created_year> ;
+    crm:P94_has_created gd:W000000001 , gd:C000000001 , gd:C000000002 .
+
+<http://data.golemlab.eu/data/W000000001/created_year> a crm:E52_Time-Span ;
+    crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000001/work_creation> ; # Fanfic_Work
+    # rdf:value "1997"^^crm:E61_Time_Primitive . # can I do this? Or: E61_Time_Primitive, P170_defines_time: E52_Time-Span
+    rdf:value "1997"^^xsd:int . # IB: I would just do that for now.
+
+# Author J.K. Rowling
+gd:A000000001 a crm:E39_Actor ;
+    rdfs:label "Rowling, J. K." ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/A000000001/author_name> ,
+    <http://data.golemlab.eu/data/A000000001/wikidata_id> ,
+    <http://data.golemlab.eu/data/A000000001/id> ;
+    lrm:P14i_performed <http://data.golemlab.eu/data/W000000001/work_creation> .
+
+# An author ID
+<http://data.golemlab.eu/data/A000000001/id> a crm:E42_Identifier;
+    crm:P2_has_type gt:id ;
+    rdf:value "A000000001" .
+
+# An author's name
+<http://data.golemlab.eu/data/A000000001/author_name> a crm:E41_Appellation ;
+    rdfs:label "Name of the author J. K. Rowling" ;
+    crm:P1i_identifies gd:A000000001 ;
+    rdf:value "Rowling, J. K." .
+
+# Wikidata identifier of the author J. K. Rowling
+<http://data.golemlab.eu/data/C000000001/wikidata_id> a crm:E42_Identifier ;
+    rdfs:label "Wikidata ID of the character J. K. Rowling" ;
+    crm:P1i_identifies gd:C000000002 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q34660" .
+
+# A single character (Harry Potter in the canon)
+gd:C000000001 a golem:C1_Character_Concept ;
+    rdfs:label "Concept of Harry Potter (canonical character)" ;
+    crm:P43_has_dimension <http://data.golemlab.eu/data/C000000001/measurement/number_of_documents> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/id> ,
+    <http://data.golemlab.eu/data/C000000001/wikidata_id> ,
+    <http://data.golemlab.eu/data/C000000001/character_name> ;
+    crm:P129i_is_subject_of <http://data.golemlab.eu/data/C000000001/source_name> ; # Fandom.com wiki page
+    # lrm:R19i_was_realised_through <http://data.golemlab.eu/data/characters/harry_potter/{C2_Character_Expression}> ; # how to refer to multiple expressions? Shall we list them all?
+    lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/work_creation> ;
+    crm:P2_has_type gt:canonical_character ;
+    lrm:R2i_has_derivative gd:C000000003 . # Derivative_Character
+    # todo: add property of event modifying the C1_Character_Concept when the second novel is written
+
+# A charachter ID
+<http://data.golemlab.eu/data/C000000001/id> a crm:E42_Identifier;
+    crm:P2_has_type <http://data.golemlab.eu/entity/type/id> ;
+    rdf:value "C000000001" .
+
+# A canonical-character's name
+<http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
+    rdfs:label "Name of the character Harry Potter" ;
+    crm:P1i_identifies gd:C000000001 ;
+    rdf:value "Harry Potter" .
+
+# Source of info
+<http://data.golemlab.eu/data/C000000001/source_name> a crm:E73_Information_Object ;
+    rdfs:label "Fandom.com wiki page about Harry Potter character" ;
+    crm:P67i_is_referred_to_by <https://harrypotter.fandom.com/wiki/Harry_Potter> . # this is sourceUrl in the frontend
+
+# A single character (Harry Potter in the fanon)
+    gd:C000000003 a golem:C1_Character_Concept ;
+        rdfs:label "Concept of Harry Potter (derivative character)" ;
+        crm:P43_has_dimension <http://data.golemlab.eu/data/C000000003/measurement/number_of_documents> ;
+        crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000003/id> , # do I need to repeat this since it's already in the entity's URI?
+        # I don't think I need to explicit the character_name because it's always that of the canonical character.
+        # Sometimes there may be aliases, but that's expressed with P139_has_alternative_form : E41
+        <http://data.golemlab.eu/data/C000000003/character_name> ;  #IB here is something wrong
+        crm:P2_has_type gt:derivative_character ;
+        lrm:R2_is_derivative_of gd:C000000001 . # Canonical_Character
+
+# A derivative-character ID
+<http://data.golemlab.eu/data/C000000003/id> a crm:E42_Identifier;
+    crm:P2_has_type <http://data.golemlab.eu/entity/type/id> ;
+    rdf:value "C000000003" .
+
+# A derivative-character's name [maybe not needed, see line 149]
+<http://data.golemlab.eu/data/C000000003/character_name> a crm:E41_Appellation ;
+    rdfs:label "Name of the derivative character Harry Potter" ;
+    crm:P1i_identifies gd:C000000003 ;
+    crm:P139i_is_alternative_form_of <http://data.golemlab.eu/data/C000000001/character_name> ; # Canonical_Character
+    rdf:value "Harry Potter" . # rdf:value "Harry Potter alias"
+
+# Creation of derivative character in fanon
+<http://data.golemlab.eu/data/W000000002/work_creation> a lrm:F27_Work_Creation ;
+    rdfs:label "Event creating the Harry Potter derivative character concept" ;
+    crm:P94_has_created gd:W000000002 , gd:C000000003 ; # Fanfic_Work and Derivative_Character
+    crm:P16_used_specific_object gd:C000000001 ; # Canonical_Character
+    # todo: maybe also used another canonical character as inspiration or was_derived
+    lrm:P14_carried_out_by <http://data.golemlab.eu/data/A000000002> ; # Fanfic_Author
+    crm:P4_has_time-span <http://data.golemlab.eu/data/C000000001/first_fanfic_year> . # it's a property referring to the Canonical_Character, that's why it's nested there
+
+<http://data.golemlab.eu/data/C000000001/first_fanfic_year> a crm:E52_Time-Span ;
+    crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000002/work_creation> ; # Fanfic_Work
+    rdf:value "2000"^^xsd:int . #^^crm:E61_Time_Primitive . # can I do this? Or: E61_Time_Primitive, P170_defines_time: E52_Time-Span
+
+# Fanfic author
+<http://data.golemlab.eu/data/A000000002> a crm:E39_Actor ;
+    rdfs:label "Fanfic, A." ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/A000000002/author_name> ,
+    <http://data.golemlab.eu/data/A000000002/id> ;
+    lrm:P14i_performed <http://data.golemlab.eu/data/W000000002/work_creation> .
+
+# An fanfic-author's name
+<http://data.golemlab.eu/data/A000000002/author_name> a crm:E41_Appellation ;
+    rdfs:label "Name of the fanfic author Fanfic, A." ;
+    crm:P1i_identifies gd:A000000002 ;
+    rdf:value "Fanfic, A." .
+
+# A fanfic author ID
+<http://data.golemlab.eu/data/A000000002/id> a crm:E42_Identifier ;
+    crm:P2_has_type <http://data.golemlab.eu/entity/type/id> ;
+    rdf:value "A000000002" .
+
+# A single character (Hermione Granger)
+gd:C000000002 a golem:C1_Character_Concept ;
+    rdfs:label "Hermione Granger (canon)" ;
+    crm:P43_has_dimension <http://data.golemlab.eu/data/C000000002/measurement/number_of_documents> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000002/id> ,
+    <http://data.golemlab.eu/data/C000000002/wikidata_id> ,
+    <http://data.golemlab.eu/data/C000000002/character_name> ;
+    crm:P129i_is_subject_of <http://data.golemlab.eu/data/C000000002/source_name> ; # Fandom.com wiki page
+    # todo: lrm:R19i_was_realised_through <http://data.golemlab.eu/data/characters/harry_potter/{C2_Character_Expression}> ; # how to refer to multiple expressions? Shall we list them all?
+    lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/work_creation> ;
+    crm:P2_has_type gt:canonical_character .
+
+# A canonical-character's name
+<http://data.golemlab.eu/data/C000000002/character_name> a crm:E41_Appellation ;
+    rdfs:label "Name of the character Hermione Granger" ;
+    crm:P1i_identifies gd:C000000002 ;
+    rdf:value "Hermione Granger" .
+
+# A canonical-character ID
+<http://data.golemlab.eu/data/C000000002/id> a crm:E42_Identifier ;
+    crm:P2_has_type <http://data.golemlab.eu/entity/type/id> ;
+    rdf:value "C000000002" .
+
+# Wikidata identifier of Harry Potter character
+<http://data.golemlab.eu/data/C000000001/wikidata_id> a crm:E42_Identifier ;
+    rdfs:label "Wikidata ID of the character Harry Potter" ;
+    crm:P1i_identifies gd:C000000001 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q3244512" .
+
+# Wikidata identifier of Hermione Granger character
+<http://data.golemlab.eu/data/C000000001/wikidata_id> a crm:E42_Identifier ;
+    rdfs:label "Wikidata ID of the character Hermione Granger" ;
+    crm:P1i_identifies gd:C000000002 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q174009" .
+
+# Corpus name
+<http://data.golemlab.eu/data/potter_corpus/corpus_name> a crm:E42_Identifier ;
+    rdfs:label "Corpus name of the Harry Potter Corpus" ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type gt:corpus_name ;
+    rdf:value "potter_corpus" .
+
+# Corpus acronym
+<http://data.golemlab.eu/data/potter_corpus/corpus_acronym> a crm:E41_Appellation ;
+    rdfs:label "Acronym of the Harry Potter Corpus" ;
+    crm:P1i_identifies gd:potter_corpus ;
+    crm:P2_has_type gt:corpus_acronym> ;
+    rdf:value "Potter" .
+
+# IB: would use a note and associate freetext (literal to it). have to think of how to do that later
+# Corpus description
+#<http://data.golemlab.eu/data/potter_corpus/corpus_description> a crm:E55_Type ;
+#    rdfs:label "Description of the Harry Potter Corpus" ;
+#    crm:P2_has_type gt:genre .
+
+# Measurement: Number of stories in the Harry Potter Corpus
+<http://data.golemlab.eu/data/potter_corpus/measurement/number_of_documents> a crm:E54_Dimension ;
+    rdfs:label "Number of Stories in the Harry Potter corpus" ;
+    crm:P90_has_value "200000"^^xsd:int ;
+    crm:P91_has_unit golem:unit_document .
+
+# Measurement: Number of characters in the Harry Potter Corpus
+<http://data.golemlab.eu/data/potter_corpus/measurement/number_of_characters> a crm:E54_Dimension ;
+    rdfs:label "Number of distinct Characters in the Harry Potter corpus" ;
+    crm:P90_has_value "20"^^xsd:int ;
+    crm:P91_has_unit golem:unit_character .
+
+# Measurement: Number of documents about the character Harry Potter
+<http://data.golemlab.eu/data/C000000001/measurement/number_of_documents> a crm:E54_Dimension ;
+    rdfs:label "Number of documents about the character Harry Potter" ;
+    crm:P90_has_value "213000"^^xsd:int ;
+    crm:P91_has_unit golem:unit_document .
+
+# Measurement: Number of documents about the character Hermione Granger
+<http://data.golemlab.eu/data/C000000002/measurement/number_of_documents> a crm:E54_Dimension ;
+    rdfs:label "Number of documents about the character Hermione Granger" ;
+    crm:P90_has_value "124000"^^xsd:int ;
+    crm:P91_has_unit golem:unit_document .

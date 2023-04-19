@@ -8,7 +8,20 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creation> .
+<http://data.golemlab.eu/data/A000000001/id> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:A000000001 ;
+    crm:P2_has_type gt:id ;
+    rdf:value "A000000001" .
+
+<http://data.golemlab.eu/data/A000000001/name> a crm:E41_Appellation ;
+    crm:P1i_identifies gd:A000000001 ;
+    crm:P2_has_type gt:author_name ;
+    rdf:value "Rowling, J. K." .
+
+<http://data.golemlab.eu/data/A000000001/wd> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:A000000001 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q34660" .
 
 <http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
     crm:P2_has_type gt:character_name ;
@@ -18,6 +31,11 @@ gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creati
     crm:P2_has_type gt:id ;
     rdf:value "C000000001" .
 
+<http://data.golemlab.eu/data/C000000001/wd> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:C000000001 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q3244512" .
+
 <http://data.golemlab.eu/data/C000000002/character_name> a crm:E41_Appellation ;
     crm:P2_has_type gt:character_name ;
     rdf:value "Hermione Granger" .
@@ -25,6 +43,11 @@ gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creati
 <http://data.golemlab.eu/data/C000000002/id> a crm:E42_Identifier ;
     crm:P2_has_type gt:id ;
     rdf:value "C000000002" .
+
+<http://data.golemlab.eu/data/C000000002/wd> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:C000000002 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q174009" .
 
 <http://data.golemlab.eu/data/W000000001/creation/ts> a crm:E52_Time-Span ;
     crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000001/creation> ;
@@ -38,6 +61,11 @@ gd:A000000001 crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creati
 <http://data.golemlab.eu/data/W000000001/title> a crm:E35_Title ;
     crm:P102i_is_title_of gd:W000000001 ;
     rdf:value "Harry Potter and the Philosopher's Stone" .
+
+<http://data.golemlab.eu/data/W000000001/wd> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:W000000001 ;
+    crm:P2_has_type gt:wikidata ;
+    rdf:value "Q43361" .
 
 <http://data.golemlab.eu/data/potter_corpus/acronym> a crm:E41_Appellation ;
     crm:P1i_identifies gd:potter_corpus ;
@@ -88,7 +116,8 @@ gd:C000000001 a go:C1_Character_Concept ;
     rdfs:label "Harry Potter" ;
     crm:P148i_is_component_of gd:potter_corpus ;
     crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
-        <http://data.golemlab.eu/data/C000000001/id> ;
+        <http://data.golemlab.eu/data/C000000001/id>,
+        <http://data.golemlab.eu/data/C000000001/wd> ;
     crm:P2_has_type gt:canon_character,
         <http://data.golemlab.eu/data/entity/type/gender/male> ;
     crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
@@ -97,15 +126,24 @@ gd:C000000002 a go:C1_Character_Concept ;
     rdfs:label "Hermione Granger" ;
     crm:P148i_is_component_of gd:potter_corpus ;
     crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000002/character_name>,
-        <http://data.golemlab.eu/data/C000000002/id> ;
+        <http://data.golemlab.eu/data/C000000002/id>,
+        <http://data.golemlab.eu/data/C000000002/wd> ;
     crm:P2_has_type gt:canon_character,
         <http://data.golemlab.eu/data/entity/type/gender/female> ;
     crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
+gd:A000000001 a crm:E39_Actor ;
+    rdfs:label "Rowling, J. K." ;
+    crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creation> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/A000000001/id>,
+        <http://data.golemlab.eu/data/A000000001/name>,
+        <http://data.golemlab.eu/data/A000000001/wd> .
+
 gd:W000000001 a lrm:F1_Work ;
     rdfs:label "Harry Potter and the Philosopher's Stone" ;
     crm:P102_has_title <http://data.golemlab.eu/data/W000000001/title> ;
-    crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000001/id> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000001/id>,
+        <http://data.golemlab.eu/data/W000000001/wd> ;
     lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
 gd:potter_corpus a cls:X1_Corpus ;

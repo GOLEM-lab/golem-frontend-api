@@ -14,6 +14,7 @@ class Work:
         characters (list): Characters
         authors (list): Authors
         dates (dict): Dates
+        refs (list): Identifiers in external reference ressources
         corpus_ids (list): IDs of the parent corpus
     """
     # Database connection
@@ -55,6 +56,11 @@ class Work:
     }
     """
 
+    refs = None
+    """
+        [{"ref": "QXXXXX", "type": "wikidata"}]
+        """
+
     corpus_ids = None
 
     def __init__(self,
@@ -65,6 +71,7 @@ class Work:
                  characters: list = None,
                  authors: list = None,
                  dates: dict = None,
+                 refs: list = None,
                  corpus_ids: list = None
                  ):
         """
@@ -74,6 +81,10 @@ class Work:
             uri (str): URI of the work
             id (str): ID of the work
             title (str): Title
+            characters (list): Characters
+            authors (list): Authors
+            dates (dict): Dates
+            refs (list): IDs in external reference ressources
             corpus_ids (list): IDs of the corpora the character is contained in
         """
         if database:
@@ -103,6 +114,9 @@ class Work:
 
         if dates:
             self.dates = dates
+
+        if refs:
+            self.refs = refs
 
         if corpus_ids:
             self.corpus_ids = corpus_ids
@@ -196,5 +210,20 @@ class Work:
                 g.add((URIRef(ts_uri), RDF.type, CRM["E52_Time-Span"]))
                 # this is cheeting. Maybe there is a more CIDOC-ish way to do it.
                 g.add((URIRef(ts_uri), RDF.value, Literal(self.dates["created"])))
-                
+
+        # Wikidata id
+        if self.refs:
+            # get the wikidata id(s)
+            filtered_refs = list(filter(lambda ref: "wikidata" in ref["type"], self.refs))
+            if len(filtered_refs) == 1:
+                # one single wikidata id, otherwise it doesn't make sense
+                q = filtered_refs[0]["ref"]
+                wd_id_uri = self.uri + "/wd"
+
+                g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(wd_id_uri)))
+                g.add((URIRef(wd_id_uri), RDF.type, CRM.E42_Identifier))
+                g.add((URIRef(wd_id_uri), CRM.P1i_identifies, URIRef(self.uri)))
+                g.add((URIRef(wd_id_uri), CRM.P2_has_type, TYPE.wikidata))
+                g.add((URIRef(wd_id_uri), RDF.value, Literal(q)))
+
         return g

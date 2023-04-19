@@ -17,6 +17,7 @@ class Character:
         refs (list): Links to external reference resources
         source (dict): Information on the source
         years (dict): Information on years
+        refs (list): IDs in external reference resources
         metrics (dict): Character Metrics
         corpus_ids (list): IDs of the parent corpus
     """
@@ -38,6 +39,8 @@ class Character:
     source = None
 
     years = None
+
+    refs = None
 
     metrics = None
 
@@ -161,7 +164,20 @@ class Character:
         if self.gender:
             g.add((URIRef(self.uri), CRM.P2_has_type, TYPE["gender/" + self.gender]))
 
-        # TODO: entry name
+        # External Reference Resource (Wikidata)
+        if self.refs:
+            # get the wikidata id(s)
+            filtered_refs = list(filter(lambda ref: "wikidata" in ref["type"], self.refs))
+            if len(filtered_refs) == 1:
+                # one single wikidata id, otherwise it doesn't make sense
+                q = filtered_refs[0]["ref"]
+                wd_id_uri = self.uri + "/wd"
+
+                g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(wd_id_uri)))
+                g.add((URIRef(wd_id_uri), RDF.type, CRM.E42_Identifier))
+                g.add((URIRef(wd_id_uri), CRM.P1i_identifies, URIRef(self.uri)))
+                g.add((URIRef(wd_id_uri), CRM.P2_has_type, TYPE.wikidata))
+                g.add((URIRef(wd_id_uri), RDF.value, Literal(q)))
 
         # Corpus ids
         # Corpora, that the character is part of
