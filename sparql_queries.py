@@ -45,6 +45,10 @@ class GolemQuery(SparqlQuery):
             "uri": "http://golemlab.eu/ontology/"
         },
         {
+            "prefix": "lrm",
+            "uri": "http://www.cidoc-crm.org/cidoc-crm/lrmoo/"
+        },
+        {
             "prefix": "rdfs",
             "uri": "http://www.w3.org/2000/01/rdf-schema#"
         },
@@ -239,7 +243,6 @@ class CorpusMetrics(GolemQuery):
         SELECT ?dimensionURI ?value WHERE {
             <$1> crm:P43_has_dimension ?dimensionURI .
             ?dimensionURI crm:P90_has_value ?value .
-            ?dimensionURI rdfs:label ?dimension .
         }
         """
     # <$1> is the variable, that can be replaced with method inject(["full uri here"])
@@ -278,3 +281,9 @@ class CorpusCharacterConceptUris(GolemQuery):
             "description": "URI of a Corpus."
         }
     ]
+
+class CorpusCharacters(GolemQuery):
+    """SPARQL Query: """
+
+    label = "Character data of a single corpus"
+    # TODO: write this query
