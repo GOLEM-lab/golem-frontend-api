@@ -199,6 +199,31 @@ class CorpusAcronym(GolemQuery):
     ]
 
 
+class CorpusDescription(GolemQuery):
+    """SPARQL Query: Description by CorpusURI"""
+
+    label = "Description of Corpus"
+
+    description = """
+    Get description of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?description WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P3_has_note ?description .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+
 class CorpusNameAcronym(GolemQuery):
     """SPARQL Query: Name and Acronym by CorpusURI"""
 

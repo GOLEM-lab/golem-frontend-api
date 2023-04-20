@@ -1,5 +1,6 @@
 from sparql import DB
-from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId, CorpusCharacterConceptUris
+from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId, CorpusCharacterConceptUris, \
+    CorpusDescription
 from schemas import CorpusSchema
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
@@ -263,9 +264,34 @@ class Corpus:
                 raise Exception("Can't retrieve acronym without database connection.")
 
     def get_description(self) -> str:
-        """Get description of a corpus"""
+        """Get description of a corpus
+
+        Uses SPAQL Query "CorpusDescription" of sparql_queries.py
+
+        TODO: needs refactoring; sending of queries is redundant code
+        """
         if self.description:
             return self.description
+        else:
+            if self.database:
+                if self.uri:
+                    query = CorpusDescription()
+                    query.prepare()
+                    query.inject([self.uri])
+                    query.execute(self.database)
+                    results = query.results.simplify()
+
+                    if len(results) > 0:
+                        self.description = results[0]
+                        return self.description
+                    else:
+                        raise Exception("No description in the knowledge graph.")
+
+                else:
+                    raise Exception("URI of corpus is not set.")
+
+            else:
+                raise Exception("Can't retrieve description without database connection.")
 
     def get_licence(self) -> dict:
         """Get licence of a corpus"""
