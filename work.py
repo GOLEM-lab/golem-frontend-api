@@ -169,19 +169,30 @@ class Work:
         # created the characters
         if self.characters:
             for character_item in self.characters:
-                # only if the work created the character:
+
+
+                if "uri" in character_item:
+                    character_uri = character_item["uri"]
+                elif "id" in character_item:
+                    character_uri = golem_query.get_prefix_uri("gd") + character_item["id"]
+                else:
+                    character_uri = None
+
                 if "effect" in character_item:
+
+                    # the work created the character:
                     if character_item["effect"] == "created":
-                        if "uri" in character_item:
-                            character_uri = character_item["uri"]
-                        elif "id" in character_item:
-                            character_uri = golem_query.get_prefix_uri("gd") + character_item["id"]
-                        else:
-                            character_uri = None
 
                         if character_uri:
                             g.add((URIRef(work_creation_uri), CRM.P94_has_created, URIRef(character_uri)))
                             g.add((URIRef(character_uri), CRM.P94i_was_created_by, URIRef(work_creation_uri)))
+
+                    # The character was used, e.g. canonical character (in fanfiction stories)
+                    elif character_item["effect"] == "used":
+
+                        if character_uri:
+                            g.add((URIRef(work_creation_uri), CRM.P16_used_specific_object, URIRef(character_uri)))
+                            g.add((URIRef(character_uri), CRM.P16i_was_used_for, URIRef(work_creation_uri)))
 
         # created the work
         g.add((URIRef(work_creation_uri), LRM.R16_created, URIRef(self.uri)))
