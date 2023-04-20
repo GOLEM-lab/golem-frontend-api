@@ -107,6 +107,32 @@ class Corpus:
         if metrics:
             self.metrics = metrics
 
+    def __sparql_single_value(self, query: GolemQuery):
+        """Helper function to query a single value.
+
+        The method expects, that there is a single variable (the uri of this corpus to inject).
+        If multiple results exist, only the first will be returned. Use with care!
+
+        Args:
+            query: Instance of a Sparql Query Class
+        """
+        if self.database:
+            if self.uri:
+                query.prepare()
+                query.inject([self.uri])
+                query.execute(self.database)
+                results = query.results.simplify()
+
+                if len(results) > 0:
+                    return results[0]
+                else:
+                    raise Exception("No ID in the knowledge graph.")
+
+            else:
+                raise Exception("URI of corpus is not set.")
+        else:
+            raise Exception("Can't retrieve data without database connection.")
+
     def get_metrics(self, use_mapping: bool = False) -> dict:
         """Assemble and return corpus metrics.
 
@@ -181,29 +207,13 @@ class Corpus:
         """Get id of a corpus.
 
         Uses SPARQL query "CorpusId" of the module "sparql_queries".
-
         """
         if self.id:
             return self.id
         else:
-            if self.database:
-                if self.uri:
-                    query = CorpusId()
-                    query.prepare()
-                    query.inject([self.uri])
-                    query.execute(self.database)
-                    results = query.results.simplify()
-
-                    if len(results) > 0:
-                        self.id = results[0]
-                        return self.id
-                    else:
-                        raise Exception("No ID in the knowledge graph.")
-
-                else:
-                    raise Exception("URI of corpus is not set.")
-            else:
-                raise Exception("Can't retrieve ID without database connection.")
+            query = CorpusId()
+            self.id = self.__sparql_single_value(query)
+            return self.id
 
     def get_name(self) -> str:
         """Get name of a corpus.
@@ -215,83 +225,33 @@ class Corpus:
         if self.name:
             return self.name
         else:
-            if self.database:
-                if self.uri:
-                    query = CorpusName()
-                    query.prepare()
-                    query.inject([self.uri])
-                    query.execute(self.database)
-                    results = query.results.simplify()
-
-                    if len(results) > 0:
-                        self.name = results[0]
-                        return self.name
-                    else:
-                        raise Exception("No name in the knowledge graph.")
-
-                else:
-                    raise Exception("URI of corpus is not set.")
-            else:
-                raise Exception("Can't retrieve name without database connection.")
+            query = CorpusName()
+            self.name = self.__sparql_single_value(query)
+            return self.name
 
     def get_acronym(self) -> str:
         """Get corpus acronym
 
         Uses SPARQL query "CorpusAcronym" of the module "sparql_queries".
-
         """
         if self.acronym:
             return self.acronym
         else:
-            if self.database:
-                if self.uri:
-                    query = CorpusAcronym()
-                    query.prepare()
-                    query.inject([self.uri])
-                    query.execute(self.database)
-                    results = query.results.simplify()
-
-                    if len(results) > 0:
-                        self.acronym = results[0]
-                        return self.acronym
-                    else:
-                        raise Exception("No acronym in the knowledge graph.")
-
-                else:
-                    raise Exception("URI of corpus is not set.")
-
-            else:
-                raise Exception("Can't retrieve acronym without database connection.")
+            query = CorpusAcronym()
+            self.acronym = self.__sparql_single_value(query)
+            return self.acronym
 
     def get_description(self) -> str:
         """Get description of a corpus
 
-        Uses SPAQL Query "CorpusDescription" of sparql_queries.py
-
-        TODO: needs refactoring; sending of queries is redundant code
+        Uses SPARQL Query "CorpusDescription" of sparql_queries.py
         """
         if self.description:
             return self.description
         else:
-            if self.database:
-                if self.uri:
-                    query = CorpusDescription()
-                    query.prepare()
-                    query.inject([self.uri])
-                    query.execute(self.database)
-                    results = query.results.simplify()
-
-                    if len(results) > 0:
-                        self.description = results[0]
-                        return self.description
-                    else:
-                        raise Exception("No description in the knowledge graph.")
-
-                else:
-                    raise Exception("URI of corpus is not set.")
-
-            else:
-                raise Exception("Can't retrieve description without database connection.")
+            query = CorpusDescription()
+            self.description = self.__sparql_single_value(query)
+            return self.description
 
     def get_licence(self) -> dict:
         """Get licence of a corpus"""
