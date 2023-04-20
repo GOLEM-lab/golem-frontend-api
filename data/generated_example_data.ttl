@@ -23,6 +23,16 @@
     crm:P2_has_type gt:wikidata ;
     rdf:value "Q34660" .
 
+<http://data.golemlab.eu/data/A000000002/id> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:A000000002 ;
+    crm:P2_has_type gt:id ;
+    rdf:value "A000000002" .
+
+<http://data.golemlab.eu/data/A000000002/name> a crm:E41_Appellation ;
+    crm:P1i_identifies gd:A000000002 ;
+    crm:P2_has_type gt:author_name ;
+    rdf:value "Fanfiction, Author" .
+
 <http://data.golemlab.eu/data/C000000001/character_name> a crm:E41_Appellation ;
     crm:P2_has_type gt:character_name ;
     rdf:value "Harry Potter" .
@@ -75,6 +85,19 @@
     crm:P2_has_type gt:wikidata ;
     rdf:value "Q43361" .
 
+<http://data.golemlab.eu/data/W000000002/creation/ts> a crm:E52_Time-Span ;
+    crm:P4i_is_time-span_of <http://data.golemlab.eu/data/W000000002/creation> ;
+    rdf:value 2022 .
+
+<http://data.golemlab.eu/data/W000000002/id> a crm:E42_Identifier ;
+    crm:P1i_identifies gd:W000000002 ;
+    crm:P2_has_type gt:id ;
+    rdf:value "W000000002" .
+
+<http://data.golemlab.eu/data/W000000002/title> a crm:E35_Title ;
+    crm:P102i_is_title_of gd:W000000002 ;
+    rdf:value "A Harry Potter Fanfiction Story" .
+
 <http://data.golemlab.eu/data/potter_corpus/acronym> a crm:E41_Appellation ;
     crm:P1i_identifies gd:potter_corpus ;
     crm:P2_has_type gt:corpus_acronym ;
@@ -120,14 +143,11 @@
     crm:P3_has_note "CC0" ;
     crm:P67_refers_to <https://creativecommons.org/publicdomain/zero/1.0> .
 
-gd:C000000003 a go:C1_Character_Concept ;
-    rdfs:label "Harry Potter" ;
-    crm:P130_shows_features_of gd:C000000001 ;
-    crm:P148i_is_component_of gd:potter_corpus ;
-    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000003/character_name>,
-        <http://data.golemlab.eu/data/C000000003/id> ;
-    crm:P2_has_type gt:fanon_character,
-        <http://data.golemlab.eu/data/entity/type/gender/male> .
+gd:A000000002 a crm:E39_Actor ;
+    rdfs:label "Fanfiction, Author" ;
+    crm:P14i_performed <http://data.golemlab.eu/data/W000000002/creation> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/A000000002/id>,
+        <http://data.golemlab.eu/data/A000000002/name> .
 
 gd:C000000002 a go:C1_Character_Concept ;
     rdfs:label "Hermione Granger" ;
@@ -139,23 +159,28 @@ gd:C000000002 a go:C1_Character_Concept ;
         <http://data.golemlab.eu/data/entity/type/gender/female> ;
     crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
+gd:C000000003 a go:C1_Character_Concept ;
+    rdfs:label "Harry Potter" ;
+    crm:P130_shows_features_of gd:C000000001 ;
+    crm:P148i_is_component_of gd:potter_corpus ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000003/character_name>,
+        <http://data.golemlab.eu/data/C000000003/id> ;
+    crm:P2_has_type gt:fanon_character,
+        <http://data.golemlab.eu/data/entity/type/gender/male> ;
+    crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000002/creation> .
+
+gd:W000000002 a lrm:F1_Work ;
+    rdfs:label "A Harry Potter Fanfiction Story" ;
+    crm:P102_has_title <http://data.golemlab.eu/data/W000000002/title> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/W000000002/id> ;
+    lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000002/creation> .
+
 gd:A000000001 a crm:E39_Actor ;
     rdfs:label "Rowling, J. K." ;
     crm:P14i_performed <http://data.golemlab.eu/data/W000000001/creation> ;
     crm:P1_is_identified_by <http://data.golemlab.eu/data/A000000001/id>,
         <http://data.golemlab.eu/data/A000000001/name>,
         <http://data.golemlab.eu/data/A000000001/wd> .
-
-gd:C000000001 a go:C1_Character_Concept ;
-    rdfs:label "Harry Potter" ;
-    crm:P130i_features_are_also_found_on gd:C000000003 ;
-    crm:P148i_is_component_of gd:potter_corpus ;
-    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
-        <http://data.golemlab.eu/data/C000000001/id>,
-        <http://data.golemlab.eu/data/C000000001/wd> ;
-    crm:P2_has_type gt:canon_character,
-        <http://data.golemlab.eu/data/entity/type/gender/male> ;
-    crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
 gd:W000000001 a lrm:F1_Work ;
     rdfs:label "Harry Potter and the Philosopher's Stone" ;
@@ -164,12 +189,31 @@ gd:W000000001 a lrm:F1_Work ;
         <http://data.golemlab.eu/data/W000000001/wd> ;
     lrm:R16i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
 
+gd:C000000001 a go:C1_Character_Concept ;
+    rdfs:label "Harry Potter" ;
+    crm:P130i_features_are_also_found_on gd:C000000003 ;
+    crm:P148i_is_component_of gd:potter_corpus ;
+    crm:P16i_was_used_for <http://data.golemlab.eu/data/W000000002/creation> ;
+    crm:P1_is_identified_by <http://data.golemlab.eu/data/C000000001/character_name>,
+        <http://data.golemlab.eu/data/C000000001/id>,
+        <http://data.golemlab.eu/data/C000000001/wd> ;
+    crm:P2_has_type gt:canon_character,
+        <http://data.golemlab.eu/data/entity/type/gender/male> ;
+    crm:P94i_was_created_by <http://data.golemlab.eu/data/W000000001/creation> .
+
 <http://data.golemlab.eu/data/W000000001/creation> a lrm:F27_Work_Creation ;
     crm:P14_carried_out_by gd:A000000001 ;
     crm:P4_has_time-span <http://data.golemlab.eu/data/W000000001/creation/ts> ;
     crm:P94_has_created gd:C000000001,
         gd:C000000002 ;
     lrm:R16_created gd:W000000001 .
+
+<http://data.golemlab.eu/data/W000000002/creation> a lrm:F27_Work_Creation ;
+    crm:P14_carried_out_by gd:A000000002 ;
+    crm:P16_used_specific_object gd:C000000001 ;
+    crm:P4_has_time-span <http://data.golemlab.eu/data/W000000002/creation/ts> ;
+    crm:P94_has_created gd:C000000003 ;
+    lrm:R16_created gd:W000000002 .
 
 gd:potter_corpus a cls:X1_Corpus ;
     rdfs:label "Harry Potter Corpus" ;
