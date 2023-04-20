@@ -1,6 +1,6 @@
 from sparql import DB
 from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId, CorpusCharacterConceptUris, \
-    CorpusDescription
+    CorpusDescription, CorpusLicence
 from schemas import CorpusSchema
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
@@ -254,8 +254,15 @@ class Corpus:
             return self.description
 
     def get_licence(self) -> dict:
-        """Get licence of a corpus"""
+        """Get licence of a corpus
+
+        Uses SPARQL Query "CorpusLicence" of sparql_queries.py
+        """
         if self.licence:
+            return self.licence
+        else:
+            query = CorpusLicence()
+            self.licence = self.__sparql_single_value(query)
             return self.licence
 
     def get_repository(self) -> dict:

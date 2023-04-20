@@ -224,6 +224,37 @@ class CorpusDescription(GolemQuery):
     ]
 
 
+class CorpusLicence(GolemQuery):
+    """SPARQL Query: Licence by CorpusURI"""
+
+    label = "Licence data of Corpus"
+
+    description = """
+    Get licence data of a corpus identified by an URI.
+    """
+
+    template = """
+    SELECT ?uri ?name WHERE {
+        <$1> a cls:X1_Corpus ;
+            crm:P104_is_subject_to ?licence .
+        
+        ?licence a crm:E30_Right;
+            crm:P3_has_note ?name ;
+            crm:P67_refers_to ?uri .
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
+
+
+CorpusLicence
+
 class CorpusNameAcronym(GolemQuery):
     """SPARQL Query: Name and Acronym by CorpusURI"""
 
