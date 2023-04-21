@@ -1,6 +1,6 @@
 from sparql import DB
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
-from sparql_queries import GolemQuery
+from sparql_queries import GolemQuery, EntityId
 from schemas import CharacterSchema
 
 
@@ -151,7 +151,7 @@ class Character:
             g.add((URIRef(self.uri), CRM.P1_is_identified_by, URIRef(id_uri)))
 
             # Corpus ID as Identifier
-            g.add((URIRef(id_uri), RDF.type, CRM.E42_Identifier))
+            g.add((URIRef(id_uri), RDF.type, CRM.E42_Identifier)) # :uri a crm:E42_Identifier
             g.add((URIRef(id_uri), CRM.P2_has_type, TYPE.id))
             g.add((URIRef(id_uri), RDF.value, Literal(self.id)))
 
@@ -206,6 +206,51 @@ class Character:
 
         return g
 
+    def __sparql_single_value(self, query: GolemQuery):
+        """Helper function to query a single value.
+
+        The method expects, that there is a single variable (the uri of this corpus to inject).
+        If multiple results exist, only the first will be returned. Use with care!
+
+        Args:
+            query: Instance of a Sparql Query Class
+        """
+        if self.database:
+            if self.uri:
+                query.prepare()
+                query.inject([self.uri])
+                query.execute(self.database)
+                results = query.results.simplify()
+
+                if len(results) > 0:
+                    return results[0]
+                else:
+                    raise Exception("No ID in the knowledge graph.")
+
+            else:
+                raise Exception("URI of corpus is not set.")
+        else:
+            raise Exception("Can't retrieve data without database connection.")
+
+    def get_id(self) -> str:
+        """Get id of a character.
+
+        Uses SPARQL query "EntityId" of the module "sparql_queries".
+        """
+        if self.id:
+            return self.id
+        else:
+            query = EntityId()
+            self.id = self.__sparql_single_value(query)
+            return self.id
+
+    def get_name(self):
+        """Get name of character
+
+        Uses SPARQL Query X from sparql_queries.py.
+        """
+        pass
+
     def get_metadata(self, validation: bool = False) -> dict:
         """Serialize Character Metadata.
 
@@ -223,7 +268,7 @@ class Character:
 
         # TODO: implement:
         """
-                id = fields.Str()
+            id = fields.Str()
             uri = fields.Str()
             characterType = fields.Str(validate=validate.OneOf(["canon", "fanon"]))
             characterName = fields.Str()
