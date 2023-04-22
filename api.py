@@ -162,6 +162,9 @@ def get_corpora():
                         schema:
                             type: string
     """
+    if corpora is None:
+        corpora.load()
+
     if "include" in request.args:
         param_include = str(request.args["include"])
     else:

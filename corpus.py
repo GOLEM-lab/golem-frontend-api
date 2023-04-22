@@ -266,7 +266,11 @@ class Corpus:
             return self.licence
 
     def get_repository(self) -> dict:
-        """Get repository of a corpus"""
+        """Get repository of a corpus
+
+        This is not in the auto-generated RDF testdata.
+        TODO: add to testdata and implement with SPARQL query
+        """
         if self.repository:
             return self.repository
 

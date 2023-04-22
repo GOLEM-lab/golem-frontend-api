@@ -132,5 +132,7 @@ class Corpora:
                 # TODO: handle the error of missing database connection
                 corpus_item = self.corpora[corpus_id].get_metadata(include_metrics=include_metrics)
                 corpus_list.append(corpus_item)
+
+        # TODO: check if I can load the corpora here
         return corpus_list
 

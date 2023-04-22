@@ -253,8 +253,6 @@ class CorpusLicence(GolemQuery):
     ]
 
 
-CorpusLicence
-
 class CorpusNameAcronym(GolemQuery):
     """SPARQL Query: Name and Acronym by CorpusURI"""
 
@@ -338,8 +336,40 @@ class CorpusCharacterConceptUris(GolemQuery):
         }
     ]
 
+
+class EntityId(GolemQuery):
+    """SPARQL Query: ID by URI"""
+
+    label = "ID of an Entity"
+
+    description = """
+    Generic query to get ID of an entity identified by an URI.
+    It identifies the node that holds the ID as value by the type "id" (gt:id).
+    """
+
+    template = """
+    SELECT ?id WHERE {
+        <$1> crm:P1_is_identified_by ?identifier .
+
+        ?identifier a crm:E42_Identifier ;
+            crm:P2_has_type gt:id ; 
+            rdf:value ?id .
+    }
+    """
+
+    variables = [
+        {
+            "id": "entity_uri",
+            "class": "crm:E1_CRM_Entity",
+            "description": "URI of an Entity."
+        }
+    ]
+
+
 class CorpusCharacters(GolemQuery):
     """SPARQL Query: """
 
     label = "Character data of a single corpus"
     # TODO: write this query
+
+
