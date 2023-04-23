@@ -9,7 +9,7 @@ This data was generated with the Jupyter Notebook [generate_test_data](generate_
 
 The frontend can be found at https://github.com/GOLEM-lab/golem-corpora-frontend.
 
-# Run the API
+## Run the API
 
 ### Docker
 
