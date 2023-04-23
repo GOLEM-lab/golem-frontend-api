@@ -2,5 +2,9 @@
 .DS_Store
 .idea/
 config.poetrylab.json
-postdata_examples.zip
 venv/
+test_Corpora_class.ipynb
+test_Corpus_class.ipynb
+test_sparql_queries.ipynb
+test_sparql_virtuoso.ipynb
+test_virtuoso.ipynb
