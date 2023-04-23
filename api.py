@@ -162,8 +162,11 @@ def get_corpora():
                         schema:
                             type: string
     """
-    if corpora is None:
-        corpora.load()
+    if not corpora.corpora:
+        try:
+            corpora.load()
+        except:
+            pass
 
     if "include" in request.args:
         param_include = str(request.args["include"])
@@ -198,7 +201,6 @@ def get_corpus_metadata(corpus_id: str):
         description: Returns metadata on a corpus. Unlike the DraCor API the response does not contain information
             on included items (works, characters) by default. Use the endpoint ``/corpora/{corpus_id}/characters`` instead.
         operationId: get_corpus_metadata
-        summary: Corpus Metadata
         parameters:
             -   in: path
                 name: corpus_id
@@ -235,6 +237,12 @@ def get_corpus_metadata(corpus_id: str):
                         schema:
                             type: string
     """
+    if not corpora.corpora:
+        try:
+            corpora.load()
+        except:
+            pass
+
     if corpus_id in corpora.corpora:
 
         if "include" in request.args:
@@ -261,6 +269,56 @@ def get_corpus_metadata(corpus_id: str):
 
         # return jsonify(schema.dump(metadata))
         return jsonify(metadata)
+
+    else:
+        return Response(f"No such corpus: {corpus_id}", status=404,
+                        mimetype="text/plain")
+
+@api.route("/corpora/<path:corpus_id>/characters", methods=["GET"])
+def get_corpus_characters(corpus_id: str):
+    """Get Characters of a single corpus
+
+    Args:
+        corpus_id: ID of the corpus.
+
+    ---
+    get:
+        summary: Corpus Characters
+        description: Returns characters in a corpus
+        operationId: get_corpus_characters
+        parameters:
+            -   in: path
+                name: corpus_id
+                description: ID of the corpus.
+                required: true
+                example: potter_corpus
+                schema:
+                    type: string
+        responses:
+            200:
+                description: Corpus metadata.
+                content:
+                    application/json:
+                        schema: CorpusMetadata
+            404:
+                description: No such corpus. Parameter ``corpus_id`` is invalid. A list of valid values can be
+                    retrieved via the ``/corpora`` endpoint.
+                content:
+                    text/plain:
+                        schema:
+                            type: string
+    """
+    if not corpora.corpora:
+        try:
+            corpora.load()
+        except:
+            pass
+
+    if corpus_id in corpora.corpora:
+        # this will be very basic information
+        characters = corpora.corpora[corpus_id].get_characters()
+
+        return jsonify(characters)
 
     else:
         return Response(f"No such corpus: {corpus_id}", status=404,
@@ -379,6 +437,7 @@ with api.test_request_context():
     spec.path(view=get_info)
     spec.path(view=get_corpora)
     spec.path(view=get_corpus_metadata)
+    spec.path(view=get_corpus_characters)
     spec.path(view=trigger_loading_corpora)
     spec.path(view=ingest_data)
     spec.path(view=delete_graph)
