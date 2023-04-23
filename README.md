@@ -1,11 +1,11 @@
 # golem-api
 A [DraCor](https://dracor.org) powered GOLEM-API
 
-The data is stored in a Virtuoso Triple store (use https://hub.docker.com/r/openlink/virtuoso-opensource-7). 
-For testing purposes use the file `data/generated_example_data.ttl`. This data was generated with the Jupyter 
-Notebook [generate_test_data](generate_test_data.ipynb).
-
 See the notebook [Howto](Howto.ipynb) for a Tutorial on how to use the tool.
+
+The data is stored in a Virtuoso Triple store (use https://hub.docker.com/r/openlink/virtuoso-opensource-7). 
+For testing purposes use the file [generated_example_data.ttl](data/generated_example_data.ttl). 
+This data was generated with the Jupyter Notebook [generate_test_data](generate_test_data.ipynb).
 
 The frontend can be found at https://github.com/GOLEM-lab/golem-corpora-frontend.
 
