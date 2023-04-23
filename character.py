@@ -1,6 +1,6 @@
 from sparql import DB
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
-from sparql_queries import GolemQuery, EntityId
+from sparql_queries import GolemQuery, EntityId, CharacterName
 from schemas import CharacterSchema
 
 
@@ -88,12 +88,10 @@ class Character:
         if id:
             self.id = id
         else:
-            pass
-            # try to SPARQL the ID
-            # try:
-                # self.get_id()
-            # except:
-                # pass
+            try:
+                self.get_id()
+            except:
+                pass
 
         if character_type:
             self.character_type = character_type
@@ -247,9 +245,15 @@ class Character:
     def get_name(self):
         """Get name of character
 
-        Uses SPARQL Query X from sparql_queries.py.
+        Uses SPARQL Query "CharacterName" from sparql_queries.py.
         """
-        pass
+        if self.name:
+            return self.name
+        else:
+            query = CharacterName()
+            self.name = self.__sparql_single_value(query)
+            return self.name
+
 
     def get_metadata(self, validation: bool = False) -> dict:
         """Serialize Character Metadata.
@@ -263,7 +267,8 @@ class Character:
 
         metadata = dict(
             id=self.id,
-            uri=self.uri
+            uri=self.uri,
+            characterName=self.name
         )
 
         # TODO: implement:

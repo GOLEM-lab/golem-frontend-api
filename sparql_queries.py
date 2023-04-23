@@ -366,6 +366,36 @@ class EntityId(GolemQuery):
     ]
 
 
+class CharacterName(GolemQuery):
+    """SPARQL Query: Character Name by URI"""
+
+    label = "Name of a character"
+
+    description = """
+    Get the name (E41_Appellation) of a character.
+    """
+
+    template = """
+    SELECT ?name WHERE {
+        <$1> crm:P1_is_identified_by ?appellation .
+
+        ?appellation a crm:E41_Appellation ;
+            crm:P2_has_type gt:character_name ; 
+            rdf:value ?name .
+    }
+    """
+
+    variables = [
+        {
+            "id": "character_uri",
+            "class": "go:C1_Character_Concept",
+            "description": "URI of a Character."
+        }
+    ]
+
+
+
+
 class CorpusCharacters(GolemQuery):
     """SPARQL Query: """
 

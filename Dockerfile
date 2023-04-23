@@ -36,6 +36,10 @@ COPY sparql.py /api
 COPY sparql_queries.py /api
 COPY corpora.py /api
 COPY corpus.py /api
+COPY character.py /api
+COPY work.py /api
+COPY author.py /api
+
 
 # configure the container to run in an executed manner
 ENTRYPOINT [ "python", "/api/api.py" ]
