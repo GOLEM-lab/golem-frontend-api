@@ -1,14 +1,19 @@
 # golem-api
+A [DraCor](https://dracor.org) powered GOLEM-API
 
-DraCor-style API to GOLEMs Triple Store
+On the general setup and the idea behind this API see also the [CLS INFRA](https://clsinfra.io) Deliverable 
+[D7.1 "On Programmable Corpora"](https://doi.org/10.5281/zenodo.7664964). 
+The system is an adapted version of the [*POSTDATA 2 DraCor API*](https://github.com/dracor-org/poecor-api).
 
-GOLEM data is stored in Virtuoso
+The data is stored in a Virtuoso Triple store (use https://hub.docker.com/r/openlink/virtuoso-opensource-7). 
+For testing purposes use the file `data/generated_example_data.ttl`. This data was generated with the Jupyter 
+Notebook [generate_test_data](generate_test_data.ipynb).
 
-Generic API:
+See the notebook [Howto](Howto.ipynb) for a Tutorial on how to use the tool.
 
-* List corpora and metrics
+The frontend can be found at https://github.com/GOLEM-lab/golem-corpora-frontend.
 
-Triple Store: Virtuoso (use https://hub.docker.com/r/openlink/virtuoso-opensource-7)
+# Run the API
 
 ### Docker
 
@@ -19,6 +24,7 @@ docker container:
 docker compose up
 ```
 
+The interactive OpenAPI documentation of the API can be found at http://localhost:5000.
 
 ### Python
 
@@ -27,19 +33,6 @@ python3 -m venv venv
 source venv/bin/activate
 pip3 freeze > requirements.txt
 ```
-
-## Data
-Example data is in `/data`. Upload to Vituoso to named graph `https://golemlab.eu/data`. 
-SPARQL Query Interface of Virtuoso: http://localhost:8890/sparql
-
-```
-SELECT * FROM <https://golemlab.eu/data> WHERE {
-?s ?p ?o .
-}
-```
-
-## See also
-
 
 ## Acknowledgments
 
