@@ -394,12 +394,39 @@ class CharacterName(GolemQuery):
     ]
 
 
+class CorpusCharactersUriIdName(GolemQuery):
+    """SPARQL Query: Get character URI, ID and Name for a corpus"""
 
+    label = "Character data (uri, id, name) of corpus"
 
-class CorpusCharacters(GolemQuery):
-    """SPARQL Query: """
+    description = """
+    Get character data (uri, id, optionally name) of a single corpus."""
 
-    label = "Character data of a single corpus"
-    # TODO: write this query
+    template = """
+    SELECT ?character AS ?uri ?id ?name WHERE {
+        ?character a go:C1_Character_Concept ;
+        crm:P148i_is_component_of <$1> ;
+        crm:P1_is_identified_by ?identifier.
+
+        ?identifier crm:P2_has_type gt:id;
+            rdf:value ?id .
+
+        OPTIONAL {
+            ?character crm:P1_is_identified_by ?appellation .
+            
+            ?appellation a crm:E41_Appellation;
+                crm:P2_has_type gt:character_name;
+                rdf:value ?name.
+        }
+    }
+    """
+
+    variables = [
+        {
+            "id": "corpus_uri",
+            "class": "cls:X1_Corpus",
+            "description": "URI of a Corpus."
+        }
+    ]
 
 

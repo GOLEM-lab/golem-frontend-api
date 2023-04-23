@@ -186,7 +186,7 @@ def get_corpora():
 
 
 @api.route("/corpora/<path:corpus_id>", methods=["GET"])
-def get_corpus_metadata(corpusname: str):
+def get_corpus_metadata(corpus_id: str):
     """Get Metadata on a single corpus
 
     Args:
@@ -196,7 +196,7 @@ def get_corpus_metadata(corpusname: str):
     get:
         summary: Corpus Metadata
         description: Returns metadata on a corpus. Unlike the DraCor API the response does not contain information
-            on included items (works, characters). Use the endpoint ``/corpora/{corpus_id}/characters`` instead.
+            on included items (works, characters) by default. Use the endpoint ``/corpora/{corpus_id}/characters`` instead.
         operationId: get_corpus_metadata
         summary: Corpus Metadata
         parameters:
@@ -207,12 +207,26 @@ def get_corpus_metadata(corpusname: str):
                 example: potter_corpus
                 schema:
                     type: string
+            -   in: query
+                name: include
+                description: Include additional information, e.g. characters.
+                required: false
+                schema:
+                    type: string
+                    enum:
+                        - characters
         responses:
             200:
                 description: Corpus metadata.
                 content:
                     application/json:
                         schema: CorpusMetadata
+            400:
+                description: Invalid value of parameter "include".
+                content:
+                    text/plain:
+                        schema:
+                            type: string
             404:
                 description: No such corpus. Parameter ``corpus_id`` is invalid. A list of valid values can be
                     retrieved via the ``/corpora`` endpoint.
@@ -222,7 +236,23 @@ def get_corpus_metadata(corpusname: str):
                             type: string
     """
     if corpus_id in corpora.corpora:
-        metadata = corpora.corpora[corpus_id].get_metadata(include_metrics=True)
+
+        if "include" in request.args:
+            param_include = str(request.args["include"])
+        else:
+            param_include = None
+
+        if param_include:
+            if param_include == "characters":
+                metadata = corpora.corpora[corpus_id].get_metadata(include_metrics=True, include_characters=True)
+            else:
+                return Response(f"{str(request.args['include'])} is not a valid value of parameter 'include'.",
+                                status=400,
+                                mimetype="text/plain")
+
+
+        else:
+            metadata = corpora.corpora[corpus_id].get_metadata(include_metrics=True)
 
         # TODO: Validate response before returning
         # Validate response with schema "CorpusMetadata"

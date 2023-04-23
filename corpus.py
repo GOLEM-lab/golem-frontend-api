@@ -1,9 +1,10 @@
 from sparql import DB
 from sparql_queries import CorpusMetrics, CorpusName, CorpusAcronym, CorpusId, CorpusCharacterConceptUris, \
-    CorpusDescription, CorpusLicence
+    CorpusDescription, CorpusLicence, CorpusCharactersUriIdName
 from schemas import CorpusSchema
 from rdflib import Graph, URIRef, Namespace, RDF, RDFS, Literal, XSD
 from sparql_queries import GolemQuery
+from character import Character
 
 
 class Corpus:
@@ -19,6 +20,7 @@ class Corpus:
         licence (dict) : Licence
         repository (dic) : Repository
         metrics (dict) : Metrics of a corpus
+        characters (dict): Characters in the corpus
     """
     # Database connection
     database = None
@@ -42,6 +44,12 @@ class Corpus:
 
     # Metrics of the corpus
     metrics = None
+
+    # Characters
+    characters = None
+    """
+    {"id": Character}
+    """
 
     def __init__(self,
                  database: DB = None,
@@ -274,11 +282,12 @@ class Corpus:
         if self.repository:
             return self.repository
 
-    def get_metadata(self, include_metrics: bool = False, validation: bool = False) -> dict:
+    def get_metadata(self, include_metrics: bool = False, include_characters: bool = False, validation: bool = False) -> dict:
         """Serialize Corpus Metadata.
 
         Args:
             include_metrics (bool, optional): Include metrics. Defaults to False.
+            include_characters (bool, optional): Include characters. Defaults to False.
             validation (bool, optional): Validate with schema "CorpusSchema".
 
         Returns:
@@ -309,6 +318,11 @@ class Corpus:
             # Use the hardcoded mappings by setting use_mapping to True
             metadata["metrics"] = self.get_metrics(use_mapping=True)
 
+        if include_characters is True:
+            # only sparql the data
+            characters = self.get_characters()
+            metadata["characters"] = characters
+
         if validation:
             try:
                 schema = CorpusSchema()
@@ -329,6 +343,39 @@ class Corpus:
         query.execute(self.database)
         results = query.results.simplify()
         return results
+
+    def get_characters(self, store=False):
+        """Fetch characters from the triple store.
+
+        Sparql for character information and, optionally, add instances of class Character to
+        self.characters with character id as keys.
+
+        Uses SPARQL Query "CorpusCharactersUriIdName" from sparql_queries.py .
+
+        Args:
+            store (bool): Store the characters as instances of Character in self.characters Defaults to False.
+        """
+
+        query = CorpusCharactersUriIdName()
+        query.inject([self.uri])
+        query.execute(self.database)
+        mapping = {"name": {"key":"characterName"}}
+        characters = query.results.simplify(mapping=mapping)
+
+        if not store:
+            return characters
+        else:
+            if not self.characters:
+                self.characters = {}
+
+            for item in characters:
+                character = Character(database=self.database, uri=item["uri"], id=item["id"])
+                if "characterName" in item:
+                    if item["characterName"]:
+                        character.name = item["characterName"]
+                self.characters[item["id"]] = character
+
+            return True
 
     def generate_graph(self) -> Graph:
         """Generate graph data of corpus.
